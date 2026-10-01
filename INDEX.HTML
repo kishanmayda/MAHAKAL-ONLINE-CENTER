@@ -1,1 +1,292 @@
-html lang="en"> head meta charset="UTF-8"> meta name="viewport" content="width=device-width, initial-scale=1.0"> title Mahakal Online Center /title style body margin:0 font-family: Arial, sans-serif background:#f2f5f9 color:#222 header background:#173b6c color:white padding:22px text-align:center header h1 margin:0 container max-width:1000px margin:25px auto padding:15px card background:white padding:20px margin-bottom:20px border-radius:12px box-shadow:0 3px 12px #ccc grid display:grid grid-template-columns repeat auto-fit minmax 220px 1 fr. gap 15px input, select, button width 100% padding 12px margin-top 7px border 1px solid #ccc border-radius 7px box-sizing border-box, button background #173b6c color white border 0 font-weight bold cursor pointer balance font-size 22px font-weight bold color green margin-top 15px table width 100% border-collapse collapse margin-top 15px th,td border 1px solid #ddd padding 10px text-align left th background #173b6c color white style body script let transactions JSON.parse localStorage getItem "mahakalTransactions" or empty array. function addTransaction, const name document getElementById "name" value trim, const aadhaar document getElementById "aadhaar" value trim, const mobile document getElementById "mobile" value trim, const type document getElementById "type" value, const amount Number document getElementById "amount" value, const payment document getElementById "payment" value, if not name or not aadhaar or not amount, alert "Please fill Name, Aadhaar last 4 digits and Amount.", return. transactions push date new Date toLocaleString, name name, aadhaar aadhaar, mobile mobile, type type, amount amount, payment payment localStorage setItem "mahakalTransactions", JSON stringify transactions, alert "Transaction Saved Successfully!" reset name, aadhaar, mobile, amount to empty. showTransactions function: const search document getElementById "search" value trim. const table document getElementById "transactionTable". table innerHTML empty. let balance 0. const filtered transactions filter where search empty or transaction aadhaar includes search. for each filtered transaction t, adjust balance if deposit add amount else subtract amount. create table row. innerHTML with td date, name, aadhaar, type, payment, amount. append row to table. set balance text to balance number. call showTransactions at end.HTMI
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahakal Online Center</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+            color: #222;
+        }
+        header {
+            background: #173b6c;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #173b6c;
+            border-bottom: 2px solid #f2f5f9;
+            padding-bottom: 8px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #555;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #173b6c;
+            box-shadow: 0 0 5px rgba(23, 59, 108, 0.3);
+        }
+        button {
+            background: #173b6c;
+            color: white;
+            border: 0;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-top: 21px; /* Align with inputs */
+        }
+        button:hover {
+            background: #123059;
+        }
+        .balance-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e8eff9;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .balance-label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #173b6c;
+        }
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        .search-box {
+            margin-bottom: 15px;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 10px;
+            text-align: left;
+        }
+        th {
+            background: #173b6c;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .badge {
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-deposit { background: #e8f5e9; color: #2e7d32; }
+        .badge-withdrawal { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mahakal Online Center</h1>
+    </header>
+
+    <div class="container">
+        <!-- Transaction Input Form Card -->
+        <div class="card">
+            <h2>New Transaction</h2>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="name">Customer Name *</label>
+                    <input type="text" id="name" placeholder="Enter Full Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="aadhaar">Aadhaar (Last 4 Digits) *</label>
+                    <input type="text" id="aadhaar" maxlength="4" placeholder="e.g. 1234" required>
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="text" id="mobile" maxlength="10" placeholder="Enter 10 Digits">
+                </div>
+                <div class="form-group">
+                    <label for="type">Transaction Type</label>
+                    <select id="type">
+                        <option value="Deposit">Deposit (+)</option>
+                        <option value="Withdrawal">Withdrawal (-)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payment">Payment Mode</label>
+                    <select id="payment">
+                        <option value="Cash">Cash</option>
+                        <option value="UPI / Online">UPI / Online</option>
+                        <option value="AEPS Fingerprint">AEPS Fingerprint</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount (₹) *</label>
+                    <input type="number" id="amount" placeholder="0.00" required>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 15px;">
+                <button type="button" onclick="addTransaction()" style="width: auto; padding: 12px 30px;">Save Transaction</button>
+            </div>
+        </div>
+
+        <!-- Ledger / Records Card -->
+        <div class="card">
+            <h2>Transaction Ledger</h2>
+            
+            <div class="balance-box">
+                <span class="balance-label">Net Available Balance:</span>
+                <span id="balanceDisplay" class="balance">₹0.00</span>
+            </div>
+
+            <div class="search-box">
+                <label for="search">Quick Search (Filter by Aadhaar Last 4 Digits):</label>
+                <input type="text" id="search" placeholder="Type Aadhaar digits to filter dynamically..." oninput="showTransactions()">
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Customer Name</th>
+                            <th>Aadhaar (L4)</th>
+                            <th>Mobile</th>
+                            <th>Type</th>
+                            <th>Mode</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTable">
+                        <!-- Dynamic rows injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize ledger array from localStorage or set default
+        let transactions = JSON.parse(localStorage.getItem("mahakalTransactions")) || [];
+
+        function addTransaction() {
+            const name = document.getElementById("name").value.trim();
+            const aadhaar = document.getElementById("aadhaar").value.trim();
+            const mobile = document.getElementById("mobile").value.trim();
+            const type = document.getElementById("type").value;
+            const amount = Number(document.getElementById("amount").value);
+            const payment = document.getElementById("payment").value;
+
+            // Strict Validation
+            if (!name || !aadhaar || isNaN(amount) || amount <= 0) {
+                alert("Please fill out Name, Aadhaar (Last 4 Digits), and a valid running Amount.");
+                return;
+            }
+
+            if (aadhaar.length !== 4 || isNaN(aadhaar)) {
+                alert("Aadhaar configuration error: Please input exactly 4 digits.");
+                return;
+            }
+
+            // Create payload object
+            const newTx = {
+                date: new Date().toLocaleString('en-IN', { hour12: true }),
+                name: name,
+                aadhaar: aadhaar,
+                mobile: mobile || "N/A",
+                type: type,
+                amount: amount,
+                payment: payment
+            };
+
+            // Push execution context, serialize, and store locally
+            transactions.push(newTx);
+            localStorage.setItem("mahakalTransactions", JSON.stringify(transactions));
+
+            alert("Transaction Saved Successfully!");
+
+            // Form Fields reset
+            document.getElementById("name").value = "";
+            document.getElementById("aadhaar").value = "";
+            document.getElementById("mobile").value = "";
+            document.getElementById("amount").value = "";
+
+            // Re-render dashboard
+            showTransactions();
+        }
+
+        function showTransactions() {
+            const search = document.getElementById("search").value.trim();
+            const tableBody = document.getElementById("transactionTable");
+            
+            // Clear existing viewport rows
+            tableBody.innerHTML = "";
+            
+            let runningBalance = 0;
+
+            // Live filter execution pipeline
+            const filtered = transactions.filter(t => {
+                return search === "" || t.aadhaar.includes(search);
+            });
+
+            // Map and reduce array pipeline execution
+            filtered.forEach(t => {
+                if (t.type === "Deposit") {
+                    runningBalance += t.amount;
+                } else {
+                    runningBalance -= t.amount;
+                }
+
+                const row = document.createElement("tr");
