@@ -1,141 +1,285 @@
-html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Center Management System</title>
-    <!-- Tailwind CSS for Responsive UI -->
-    <script src="https://jsdelivr.net"></script>
+    <title>Transaction & Service Dashboard</title>
     <style>
-        .hidden { display: none !important; }
-        .custom-gradient { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        :root {
+            --primary: #1e40af;
+            --primary-light: #eff6ff;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --pending: #d97706;
+            --pending-bg: #fef3c7;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+            --border: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background-color: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            border-left: 6px solid var(--primary);
+        }
+
+        h2 {
+            margin: 0 0 16px 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .service-selector {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .service-selector:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .active-banner {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 1px solid #bfdbfe;
+            letter-spacing: 0.5px;
+        }
+
+        .form-card {
+            background-color: var(--card);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+
+        input, select, textarea {
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fff;
+            color: var(--text);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .badge-success { background-color: var(--success-bg); color: var(--success); }
+        .badge-pending { background-color: var(--pending-bg); color: var(--pending); }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 24px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 p-2 sm:p-6">
+<body>
 
-    <!-- ================= AUTH CONTAINER (SIGN UP / LOGIN / OTP) ================= -->
-    <div id="auth-container" class="max-w-xl mx-auto my-10 p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-        <div class="flex justify-around mb-6 border-b pb-2" id="auth-tabs">
-            <button id="tab-login" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-2 w-1/2" onclick="switchAuthMode('login')">लॉगिन (Password / OTP)</button>
-            <button id="tab-signup" class="text-gray-500 font-bold pb-2 w-1/2" onclick="switchAuthMode('signup')">नया सेंटर रजिस्ट्रेशन</button>
-        </div>
+<div class="dashboard-container">
 
-        <!-- SIGN UP FORM -->
-        <div id="form-signup" class="hidden space-y-4">
-            <h3 class="text-lg font-bold text-gray-700 text-center">डिजिटल लेज़र खाता बनाएं</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">ऑनलाइन सेंटर/दुकान का नाम *</label>
-                    <input type="text" id="su-shop-name" placeholder="उदा. महाकाल ऑनलाइन सेंटर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">संचालक का नाम *</label>
-                    <input type="text" id="su-owner-name" placeholder="आपका नाम" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-                </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">मोबाइल नंबर *</label>
-                    <input type="text" id="su-mobile" placeholder="10 अंकों का नंबर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">WhatsApp नंबर</label>
-                    <input type="text" id="su-whatsapp" placeholder="व्हाट्सएप नंबर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-                </div>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-600">पूरा पता *</label>
-                <input type="text" id="su-address" placeholder="दुकान का पूरा पता दर्ज करें" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
-            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <p class="text-xs text-yellow-800 font-semibold">🔒 सुरक्षा सत्यापन: पहली बार रजिस्ट्रेशन के लिए मोबाइल नंबर पर OTP वेरीफाई करके पासवर्ड बनाना होगा।</p>
-                <button class="mt-2 text-xs bg-yellow-600 text-white font-bold px-3 py-1.5 rounded" onclick="sendOTP('su')">सत्यापन OTP भेजें</button>
-                <input type="text" id="su-otp" placeholder="Enter 4-Digit OTP" class="w-full p-2 border rounded mt-2 text-center text-sm tracking-widest hidden">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-600">नया पासवर्ड सेट करें *</label>
-                <input type="password" id="su-password" placeholder="******" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
-            <button class="w-full bg-green-600 text-white font-bold p-3 rounded-lg hover:bg-green-700 transition" onclick="processSignUp()">खाता सुरक्षित करें और लॉगिन करें</button>
-        </div>
-
-        <!-- LOGIN FORM -->
-        <div id="form-login" class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-600">पंजीकृत मोबाइल नंबर</label>
-                <input type="text" id="log-mobile" placeholder="9876xxxxxx" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
-            <div id="login-password-box">
-                <div class="flex justify-between">
-                    <label class="text-sm font-semibold text-gray-600">पासवर्ड</label>
-                    <a href="#" class="text-xs text-blue-600 font-semibold" onclick="enableForgotMode()">पासवर्ड भूल गए (Reset)?</a>
-                </div>
-                <input type="password" id="log-password" placeholder="******" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
-            <div id="login-otp-box" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <label class="block text-sm font-semibold text-blue-800 mb-1">सुरक्षित वन-टाइम पासवर्ड (OTP)</label>
-                <div class="flex gap-2">
-                    <input type="text" id="log-otp" placeholder="4-अंकीय OTP" class="w-1/2 p-2 border rounded-lg text-center tracking-widest">
-                    <button class="w-1/2 bg-blue-600 text-white font-bold text-xs rounded" onclick="sendOTP('log')">OTP जेनरेट करें</button>
-                </div>
-                <div id="reset-password-subbox" class="hidden mt-3">
-                    <label class="block text-sm font-semibold text-gray-600">नया पासवर्ड टाइप करें</label>
-                    <input type="password" id="log-new-password" placeholder="नया पासवर्ड" class="w-full p-2 border rounded-lg">
-                </div>
-            </div>
-            <div class="flex justify-between items-center py-2">
-                <button id="btn-toggle-otp-login" class="text-xs text-gray-600 font-bold underline" onclick="toggleOtpLoginMode()">या सीधे OTP से लॉगिन करें</button>
-            </div>
-            <button id="btn-main-login" class="w-full bg-blue-600 text-white font-bold p-3 rounded-lg hover:bg-blue-700 transition" onclick="processLogin()">सुरक्षित प्रवेश करें</button>
-        </div>
+    <!-- Service Selection Box -->
+    <div class="header-card">
+        <h2>सर्विस का चुनाव करें (Select Service)</h2>
+        <select id="serviceSelector" class="service-selector" onchange="togglePanels()">
+            <option value="aepsEnquiry">AePS Enquiry</option>
+            <option value="aepsWithdrawal">AePS Withdrawal</option>
+            <option value="deposit">Deposit</option>
+            <option value="upiQr">UPI / QR</option>
+            <option value="moneyTransfer">Money Transfer</option>
+            <option value="laundry">Laundry Payment</option>
+        </select>
     </div>
 
-    <!-- ================= MAIN APP DASHBOARD ================= -->
-    <div id="main-dashboard" class="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-4 sm:p-6 hidden">
-        
-        <div class="custom-gradient text-white p-6 rounded-xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-                <h1 id="dash-shop-title" class="text-2xl sm:text-3xl font-black tracking-wide">दुकान का नाम</h1>
-                <p id="dash-shop-meta" class="text-sm text-blue-100 mt-1 font-medium">संचालक: | पता: </p>
-            </div>
-            <button class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition shadow" onclick="processLogout()">🔒 लॉगआउट पैनल</button>
-        </div>
+    <!-- Live Active Title Display -->
+    <div id="activeTitle" class="active-banner">
+        ACTIVE SERVICE: AEPS ENQUIRY
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Dynamic Form -->
+    <div class="form-card">
+        <form onsubmit="event.preventDefault(); alert('डाटा सफलतापूर्वक दर्ज हो गया!');">
             
-            <!-- एंट्री फ़ॉर्म -->
-            <div class="lg:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-inner">
-                <div class="mb-4 bg-blue-900 text-white p-2 rounded-lg text-center font-bold text-sm">
-                    🎯 एक्टिव सर्विस: <span id="active-service-title" class="text-yellow-300">AePS Enquiry</span>
+            <!-- 1. AEPS ENQUIRY PANEL -->
+            <div id="panel-aepsEnquiry" class="panel active">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Agent ID Selection (10 Saved IDs)</label>
+                        <select class="agent-dropdown">
+                            <!-- 10 Unique Managed Agent IDs -->
+                            <option value="AG-01">AG001 (Main Counter)</option>
+                            <option value="AG-02">AG002 (Branch Office)</option>
+                            <option value="AG-03">AG003 (Desk A)</option>
+                            <option value="AG-04">AG004 (Desk B)</option>
+                            <option value="AG-05">AG005 (Field Team 1)</option>
+                            <option value="AG-06">AG006 (Field Team 2)</option>
+                            <option value="AG-07">AG007 (Support Desk)</option>
+                            <option value="AG-08">AG008 (Retail Hub)</option>
+                            <option value="AG-09">AG009 (Express Counter)</option>
+                            <option value="AG-10">AG100 (Admin BackOffice)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bank Name</label>
+                        <input type="text" placeholder="बैंक का नाम चुनें या लिखें">
+                    </div>
+                    <div class="form-group">
+                        <label>Aadhaar / Card (Last 4 Digits)</label>
+                        <input type="text" maxlength="4" placeholder="केवल आखरी 4 अंक">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Enquiry Balance</label>
+                        <input type="number" placeholder="₹ 0.00">
+                    </div>
                 </div>
+            </div>
 
-                <div class="space-y-3">
-                    <!-- 10 ID मैनेजमेंट मैनेजर (ब्राउज़र मेमोरी लॉकिंग) -->
-                    <div class="bg-amber-50 p-2.5 border border-amber-200 rounded-lg">
-                        <label class="text-xs font-bold text-amber-900 block mb-1">🔑 मल्टी-ID एजेंट मैनेजर (10 IDs तक जोड़ें)</label>
-                        <div class="flex gap-1 mb-2">
-                            <input type="text" id="new-agent-id-input" placeholder="उदा. SpiceMoney_03" class="w-full p-1 text-xs border rounded bg-white font-semibold">
-                            <button class="bg-amber-700 text-white text-xs px-2 rounded font-bold hover:bg-amber-800" onclick="addNewAgentID()">+ ID जोड़ें</button>
+            <!-- 2. AEPS WITHDRAWAL PANEL -->
+            <div id="panel-aepsWithdrawal" class="panel">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Agent ID Selection</label>
+                        <select class="agent-dropdown-copy"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bank Name</label>
+                        <input type="text" placeholder="बैंक का नाम">
+                    </div>
+                    <div class="form-group">
+                        <label>Aadhaar / Card (Last 4 Digits)</label>
+                        <input type="text" maxlength="4" placeholder="X X X X">
+                    </div>
+                    <div class="form-group">
+                        <label>Enquiry Balance (पहले कितना था)</label>
+                        <input type="number" placeholder="₹ 0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Withdrawal Amount (कितना निकाला)</label>
+                        <input type="number" placeholder="₹ 0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Charge / कटौती Amount</label>
+                        <input type="number" placeholder="₹ 0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Remaining Balance (बचा हुआ बैलेंस)</label>
+                        <input type="number" placeholder="₹ 0.00">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label>Transaction Status</label>
+                        <div class="status-container">
+                            <select id="statusSelect" onchange="changeStatusBadge(this.value)" style="width: 140px;">
+                                <option value="success">Success</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <span id="liveBadge" class="badge badge-success">SUCCESS</span>
                         </div>
-                        <select id="tx-agent-id-select" class="w-full p-1.5 text-xs border rounded bg-white font-bold text-amber-950">
-                            <!-- जोड़ी गई IDs यहाँ लोड होंगी -->
-                        </select>
                     </div>
 
-                    <div>
-                        <label class="text-xs font-bold text-gray-600 block mb-1">ट्रांजैक्शन प्रकार (Transaction Type)</label>
-                        <select id="tx-type" class="w-full p-2 border rounded bg-white font-bold text-blue-900" onchange="handleTypeChange()">
-                            <option value="AePS Enquiry">AePS Enquiry (बैलेंस इन्क्वायरी)</option>
-                            <option value="AePS Withdrawal">AePS Withdrawal (अंगूठा निकासी)</option>
-                            <option value="Deposit">Deposit (नकद जमा)</option>
-                            <option value="UPI / QR">UPI / QR (पेमेंट स्कैनर)</option>
-                            <option value="Money Transfer">Money Transfer (मनी ट्रान्सफर)</option>
-                            <option value="Laundry Payment">Laundry Payment (लॉन्ड्री सर्विस)</option>
-                        </select>
+                    <div class="form-group full-width">
+                        <label>Remarks</label>
+                        <textarea rows="2" placeholder="ट्रांजैक्शन की टिप्पणी लिखें..."></textarea>
                     </div>
+                </div>
+            </div>
 
-                    <!-- डायनामिक इनपुट फील्ड्स कंटेनर -->
-                    <div id="dynamic-fields-zone" class="space-y-3 pt-2">
-                        <!-- फ़ील्ड्स यहाँ लोड होंगी -->
-                    </div>
+            <!-- 3. DEPOSIT PANEL -->
+            <div id="panel-deposit" class="panel">
+                <div class="form-grid">
+                    <div class="form-group full-width">
