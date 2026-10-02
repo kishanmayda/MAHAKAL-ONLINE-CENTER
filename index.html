@@ -12,9 +12,8 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
 
-    <!-- ================= AUTH CONTAINER (SIGN UP / LOGIN) ================= -->
+    <!-- ================= 1. AUTH CONTAINER (SIGN UP / LOGIN) ================= -->
     <div id="auth-container" class="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
-        <!-- Auth Toggle Buttons -->
         <div class="flex justify-around mb-6 border-b pb-2">
             <button id="btn-goto-login" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1" onclick="switchAuthMode('login')">लॉगिन (Login)</button>
             <button id="btn-goto-signup" class="text-gray-500 font-medium pb-1" onclick="switchAuthMode('signup')">साइन-अप (Sign Up)</button>
@@ -29,15 +28,17 @@
             </div>
             <div class="mb-4">
                 <label class="block text-sm font-semibold mb-1">पासवर्ड</label>
-                <input type="password" id="login-password" required class="w-full p-2 border rounded" placeholder="**">
+                <input type="password" id="login-password" required class="w-full p-2 border rounded" placeholder="******">
             </div>
             <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded font-bold hover:bg-blue-700">लॉगिन करें</button>
         </form>
 
-        <!-- SIGN UP FORM -->
+        <!-- SIGN UP FORM WITH OTP VERIFICATION -->
         <form id="signup-form" class="hidden" onsubmit="handleSignUp(event)">
-            <h2 class="text-xl font-bold mb-4 text-center">नया ऑनलाइन सेंटर रजिस्टर करें</h2>
-            <div class="grid grid-cols-1 gap-3 text-sm">
+            <h2 class="text-xl font-bold mb-4 text-center">नया ऑनलाइन सेंटर रजिस्ट्रेशन</h2>
+            
+            <div id="signup-fields" class="grid grid-cols-1 gap-3 text-sm">
+                <!-- Shop Details -->
                 <div>
                     <label class="block font-semibold">सेंटर/दुकान का नाम *</label>
                     <input type="text" id="sup-shop-name" required class="w-full p-2 border rounded">
@@ -47,7 +48,7 @@
                     <input type="text" id="sup-owner-name" required class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label class="block font-semibold">मोबाइल नंबर (लॉगिन ID) *</label>
+                    <label class="block font-semibold">मोबाइल नंबर *</label>
                     <input type="tel" id="sup-mobile" required class="w-full p-2 border rounded">
                 </div>
                 <div>
@@ -55,44 +56,48 @@
                     <input type="tel" id="sup-whatsapp" class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label class="block font-semibold">पासवर्ड बनाएं *</label>
-                    <input type="password" id="sup-password" required class="w-full p-2 border rounded" placeholder="न्यूनतम 6 अंक">
-                </div>
-                <div>
                     <label class="block font-semibold">पूरा पता *</label>
                     <input type="text" id="sup-address" required class="w-full p-2 border rounded">
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block font-semibold">गाँव/शहर</label>
-                        <input type="text" id="sup-city" class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block font-semibold">जिला</label>
-                        <input type="text" id="sup-district" class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block font-semibold">PIN Code</label>
-                        <input type="text" id="sup-pin" class="w-full p-2 border rounded">
-                    </div>
+                    <div><label class="block font-semibold">गाँव/शहर</label><input type="text" id="sup-city" class="w-full p-2 border rounded"></div>
+                    <div><label class="block font-semibold">जिला</label><input type="text" id="sup-district" class="w-full p-2 border rounded"></div>
+                    <div><label class="block font-semibold">PIN</label><input type="text" id="sup-pin" class="w-full p-2 border rounded"></div>
                 </div>
+                
+                <button type="button" onclick="sendSignUpOTP()" class="w-full bg-blue-500 text-white p-2 rounded font-bold mt-2">OTP भेजें</button>
             </div>
-            <button type="submit" class="w-full bg-green-600 text-white p-2 mt-4 rounded font-bold hover:bg-green-700">रजिस्टर करें</button>
+
+            <!-- Verification & Password Box (Hidden until OTP Sent) -->
+            <div id="otp-verification-box" class="hidden mt-4 pt-4 border-t space-y-3 text-sm">
+                <div class="bg-yellow-50 p-2 text-xs border border-yellow-200 text-yellow-800 rounded">
+                    Demo OTP: <b>123456</b> (यहाँ वेरिफिकेशन के लिए 123456 डालें)
+                </div>
+                <div>
+                    <label class="block font-semibold text-red-600">दर्ज करें OTP *</label>
+                    <input type="text" id="sup-otp" class="w-full p-2 border border-red-400 rounded" placeholder="123456">
+                </div>
+                <div>
+                    <label class="block font-semibold">नया पासवर्ड बनाएं *</label>
+                    <input type="password" id="sup-password" class="w-full p-2 border rounded" placeholder="न्यूनतम 6 अंक">
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white p-2 rounded font-bold hover:bg-green-700">OTP Verify करें और अकाउंट बनाएं</button>
+            </div>
         </form>
     </div>
 
-    <!-- ================= MAIN DASHBOARD CONTAINER ================= -->
+    <!-- ================= 2. MAIN DASHBOARD CONTAINER ================= -->
     <div id="dashboard-container" class="hidden min-h-screen flex flex-col">
-        <!-- Header Dynamic Name -->
+        <!-- Header Dynamic Name (Requirement 1) -->
         <header class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
             <div>
-                <h1 id="nav-shop-name" class="text-2xl font-bold">ऑनलाइन सेंटर</h1>
+                <h1 id="nav-shop-name" class="text-2xl font-bold">लोडिंग...</h1>
                 <p id="nav-owner-info" class="text-xs opacity-80"></p>
             </div>
             <button onclick="handleLogout()" class="bg-red-600 px-3 py-1 text-sm rounded font-semibold hover:bg-red-700">लॉगआउट</button>
         </header>
 
-        <div class="p-4 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-4 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- LEFT COLUMN: NEW TRANSACTION FORM -->
             <div class="bg-white p-4 rounded-lg shadow-md h-fit">
@@ -121,23 +126,25 @@
                             <option value="Other Payment">Other Payment</option>
                         </select>
                     </div>
+                    
+                    <!-- Dynamic Bank Selection (+ Add New Bank) -->
                     <div>
-                        <label class="block font-semibold">बैंक चुनें</label>
-                        <select id="tx-bank" class="w-full p-2 border rounded">
-                            <option value="SBI">SBI</option>
-                            <option value="Bank of Baroda">Bank of Baroda</option>
-                            <option value="HDFC">HDFC</option>
-                            <option value="ICICI">ICICI</option>
-                            <option value="Axis">Axis</option>
-                        </select>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold">बैंक चुनें</label>
+                            <button type="button" onclick="addNewBankPrompt()" class="text-xs text-blue-600 font-bold">+ Add New Bank</button>
+                        </div>
+                        <select id="tx-bank" class="w-full p-2 border rounded"></select>
                     </div>
+
+                    <!-- Dynamic ID Selection (+ Add New ID) -->
                     <div>
-                        <label class="block font-semibold">ID चुनें</label>
-                        <select id="tx-id" class="w-full p-2 border rounded">
-                            <option value="ID-1">ID-1</option>
-                            <option value="ID-2">ID-2</option>
-                        </select>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="font-semibold">ID चुनें</label>
+                            <button type="button" onclick="addNewIDPrompt()" class="text-xs text-blue-600 font-bold">+ Add New ID</button>
+                        </div>
+                        <select id="tx-id" class="w-full p-2 border rounded"></select>
                     </div>
+
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block font-semibold">राशि (Amount) *</label>
@@ -153,20 +160,8 @@
             </div>
 
             <!-- RIGHT COLUMN: SEARCH & TRANSACTION HISTORY -->
-            <div class="bg-white p-4 rounded-lg shadow-md md:col-span-2">
-                <h3 class="text-lg font-bold mb-3 text-blue-800 border-b pb-1">खोजें एवं इतिहास (Search & Ledger)</h3>
+            <div class="bg-white p-4 rounded-lg shadow-md lg:col-span-2">
+                <h3 class="text-lg font-bold mb-3 text-blue-800 border-b pb-1">खोजें एवं इतिहास (Search Ledger)</h3>
                 
-                <!-- Advanced Search Bars -->
+                <!-- Search Inputs (Requirements 9 & 10) -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4 text-sm">
-                    <input type="text" id="search-text" placeholder="नाम या मोबाइल से ढूंढें..." oninput="filterTransactions()" class="p-2 border rounded col-span-1 sm:col-span-1">
-                    <div class="flex items-center space-x-1 col-span-1 sm:col-span-2">
-                        <input type="date" id="search-from" onchange="filterTransactions()" class="p-2 border rounded text-xs w-full">
-                        <span>से</span>
-                        <input type="date" id="search-to" onchange="filterTransactions()" class="p-2 border rounded text-xs w-full">
-                    </div>
-                </div>
-
-                <!-- Responsive Table Wrapper -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
