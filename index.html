@@ -3,165 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Center Management System</title>
-    <!-- Tailwind CSS for Responsive UI -->
-    <script src="https://jsdelivr.net"></script>
+    <title>Mahakal Online Center</title>
     <style>
-        .hidden { display: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #ff9933, #ffffff, #138808); height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: #d35400; margin-bottom: 10px; font-size: 24px; }
+        p { color: #7f8c8d; margin-bottom: 20px; font-size: 14px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; font-size: 14px; }
+        input { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 5px; font-size: 14px; }
+        input:focus { border-color: #e67e22; outline: none; }
+        .btn { width: 100%; padding: 12px; background: #e67e22; border: none; color: white; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn:hover { background: #d35400; }
+        .toggle-text { margin-top: 15px; font-size: 13px; color: #2c3e50; }
+        .toggle-text span { color: #e67e22; cursor: pointer; font-weight: bold; }
+        .dashboard { display: none; }
+        .service-card { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 15px; margin: 10px 0; border-radius: 8px; text-align: left; text-decoration: none; color: #333; display: block; font-weight: bold; transition: 0.2s; }
+        .service-card:hover { background: #fff3e6; border-color: #ff9933; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body>
 
-    <!-- ================= 1. AUTH CONTAINER (SIGN UP / LOGIN) ================= -->
-    <div id="auth-container" class="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
-        <div class="flex justify-around mb-6 border-b pb-2">
-            <button id="btn-goto-login" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1" onclick="switchAuthMode('login')">लॉगिन (Login)</button>
-            <button id="btn-goto-signup" class="text-gray-500 font-medium pb-1" onclick="switchAuthMode('signup')">साइन-अप (Sign Up)</button>
-        </div>
-
-        <!-- LOGIN FORM -->
-        <form id="login-form" onsubmit="handleLogin(event)">
-            <h2 class="text-xl font-bold mb-4 text-center">सेंटर लॉगिन</h2>
-            <div class="mb-4">
-                <label class="block text-sm font-semibold mb-1">मोबाइल नंबर</label>
-                <input type="tel" id="login-mobile" required class="w-full p-2 border rounded" placeholder="9893xxxxxx">
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-semibold mb-1">पासवर्ड</label>
-                <input type="password" id="login-password" required class="w-full p-2 border rounded" placeholder="******">
-            </div>
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded font-bold hover:bg-blue-700">लॉगिन करें</button>
-        </form>
-
-        <!-- SIGN UP FORM WITH OTP VERIFICATION -->
-        <form id="signup-form" class="hidden" onsubmit="handleSignUp(event)">
-            <h2 class="text-xl font-bold mb-4 text-center">नया ऑनलाइन सेंटर रजिस्ट्रेशन</h2>
-            
-            <div id="signup-fields" class="grid grid-cols-1 gap-3 text-sm">
-                <!-- Shop Details -->
-                <div>
-                    <label class="block font-semibold">सेंटर/दुकान का नाम *</label>
-                    <input type="text" id="sup-shop-name" required class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label class="block font-semibold">संचालक का नाम *</label>
-                    <input type="text" id="sup-owner-name" required class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label class="block font-semibold">मोबाइल नंबर *</label>
-                    <input type="tel" id="sup-mobile" required class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label class="block font-semibold">WhatsApp नंबर</label>
-                    <input type="tel" id="sup-whatsapp" class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label class="block font-semibold">पूरा पता *</label>
-                    <input type="text" id="sup-address" required class="w-full p-2 border rounded">
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div><label class="block font-semibold">गाँव/शहर</label><input type="text" id="sup-city" class="w-full p-2 border rounded"></div>
-                    <div><label class="block font-semibold">जिला</label><input type="text" id="sup-district" class="w-full p-2 border rounded"></div>
-                    <div><label class="block font-semibold">PIN</label><input type="text" id="sup-pin" class="w-full p-2 border rounded"></div>
-                </div>
-                
-                <button type="button" onclick="sendSignUpOTP()" class="w-full bg-blue-500 text-white p-2 rounded font-bold mt-2">OTP भेजें</button>
-            </div>
-
-            <!-- Verification & Password Box (Hidden until OTP Sent) -->
-            <div id="otp-verification-box" class="hidden mt-4 pt-4 border-t space-y-3 text-sm">
-                <div class="bg-yellow-50 p-2 text-xs border border-yellow-200 text-yellow-800 rounded">
-                    Demo OTP: <b>123456</b> (यहाँ वेरिफिकेशन के लिए 123456 डालें)
-                </div>
-                <div>
-                    <label class="block font-semibold text-red-600">दर्ज करें OTP *</label>
-                    <input type="text" id="sup-otp" class="w-full p-2 border border-red-400 rounded" placeholder="123456">
-                </div>
-                <div>
-                    <label class="block font-semibold">नया पासवर्ड बनाएं *</label>
-                    <input type="password" id="sup-password" class="w-full p-2 border rounded" placeholder="न्यूनतम 6 अंक">
-                </div>
-                <button type="submit" class="w-full bg-green-600 text-white p-2 rounded font-bold hover:bg-green-700">OTP Verify करें और अकाउंट बनाएं</button>
-            </div>
-        </form>
+<div class="container" id="auth-box">
+    <h1 id="form-title">जय महाकाल ऑनलाइन सेंटर</h1>
+    <p id="form-desc">नया अकाउंट बनाने के लिए जानकारी भरें</p>
+    
+    <div class="input-group" id="name-group">
+        <label>आपका नाम</label>
+        <input type="text" id="username" placeholder="पूरा नाम दर्ज करें">
     </div>
+    <div class="input-group">
+        <label>मोबाइल नंबर / ईमेल</label>
+        <input type="text" id="contact" placeholder="9876xxxxxx">
+    </div>
+    <div class="input-group">
+        <label>पासवर्ड</label>
+        <input type="password" id="password" placeholder="******">
+    </div>
+    
+    <button class="btn" id="submit-btn" onclick="handleSubmit()">Sign Up (रजिस्टर करें)</button>
+    
+    <p class="toggle-text" id="toggle-msg">पहले से अकाउंट है? <span onclick="toggleForm()">Login करें</span></p>
+</div>
 
-    <!-- ================= 2. MAIN DASHBOARD CONTAINER ================= -->
-    <div id="dashboard-container" class="hidden min-h-screen flex flex-col">
-        <!-- Header Dynamic Name (Requirement 1) -->
-        <header class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
-            <div>
-                <h1 id="nav-shop-name" class="text-2xl font-bold">लोडिंग...</h1>
-                <p id="nav-owner-info" class="text-xs opacity-80"></p>
-            </div>
-            <button onclick="handleLogout()" class="bg-red-600 px-3 py-1 text-sm rounded font-semibold hover:bg-red-700">लॉगआउट</button>
-        </header>
+<!-- सफलता के बाद दिखने वाला डैशबोर्ड -->
+<div class="container dashboard" id="dashboard-box">
+    <h1>आपका स्वागत है!</h1>
+    <p>महाकाल ऑनलाइन सेंटर की लाइव सेवाएं नीचे दी गई हैं:</p>
+    
+    <a href="https://mp.gov.in" target="_blank" class="service-card">🕉️ महाकाल मंदिर आधिकारिक बुकिंग</a>
+    <a href="https://mponline.gov.in" target="_blank" class="service-card">💻 MP Online सरकारी फॉर्म पोर्टल्स</a>
+    <a href="https://youtube.com" target="_blank" class="service-card">📺 महाकाल लाइव आरती (YouTube)</a>
+    
+    <button class="btn" style="background: #7f8c8d;" onclick="logout()">Log Out (बाहर निकलें)</button>
+</div>
 
-        <div class="p-4 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- LEFT COLUMN: NEW TRANSACTION FORM -->
-            <div class="bg-white p-4 rounded-lg shadow-md h-fit">
-                <h3 class="text-lg font-bold mb-3 text-blue-800 border-b pb-1">नया ट्रांजैक्शन एंट्री</h3>
-                <form onsubmit="saveTransaction(event)" class="space-y-3 text-sm">
-                    <div>
-                        <label class="block font-semibold">ग्राहक का नाम *</label>
-                        <input type="text" id="tx-cust-name" required class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block font-semibold">ग्राहक मोबाइल नंबर *</label>
-                        <input type="tel" id="tx-cust-mobile" required class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block font-semibold">आधार (अंतिम 4 अंक)</label>
-                        <input type="text" id="tx-cust-aadhaar" maxlength="4" placeholder="1234" class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block font-semibold">ट्रांजैक्शन प्रकार *</label>
-                        <select id="tx-type" required class="w-full p-2 border rounded">
-                            <option value="AEPS Withdrawal">AEPS Withdrawal</option>
-                            <option value="UPI Withdrawal">UPI Withdrawal</option>
-                            <option value="UPI Transfer">UPI Transfer</option>
-                            <option value="Cash Deposit">Cash Deposit</option>
-                            <option value="Cash Withdrawal">Cash Withdrawal</option>
-                            <option value="Other Payment">Other Payment</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Dynamic Bank Selection (+ Add New Bank) -->
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="font-semibold">बैंक चुनें</label>
-                            <button type="button" onclick="addNewBankPrompt()" class="text-xs text-blue-600 font-bold">+ Add New Bank</button>
-                        </div>
-                        <select id="tx-bank" class="w-full p-2 border rounded"></select>
-                    </div>
+<script>
+    let isSignUp = true;
 
-                    <!-- Dynamic ID Selection (+ Add New ID) -->
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="font-semibold">ID चुनें</label>
-                            <button type="button" onclick="addNewIDPrompt()" class="text-xs text-blue-600 font-bold">+ Add New ID</button>
-                        </div>
-                        <select id="tx-id" class="w-full p-2 border rounded"></select>
-                    </div>
+    function toggleForm() {
+        isSignUp = !isSignUp;
+        const formTitle = document.getElementById('form-title');
+        const formDesc = document.getElementById('form-desc');
+        const nameGroup = document.getElementById('name-group');
+        const submitBtn = document.getElementById('submit-btn');
+        const toggleMsg = document.getElementById('toggle-msg');
 
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block font-semibold">राशि (Amount) *</label>
-                            <input type="number" id="tx-amount" required class="w-full p-2 border rounded">
-                        </div>
-                        <div>
-                            <label class="block font-semibold">शेष राशि (Balance)</label>
-                            <input type="number" id="tx-balance" class="w-full p-2 border rounded" placeholder="0">
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-700 text-white p-2 rounded font-bold hover:bg-blue-800">डेटा सुरक्षित करें</button>
-                </form>
-            </div>
+        if (isSignUp) {
+            formTitle.innerText = "जय महाकाल ऑनलाइन सेंटर";
+            formDesc.innerText = "नया अकाउंट बनाने के लिए जानकारी भरें";
+            nameGroup.style.display = "block";
+            submitBtn.innerText = "Sign Up (रजिस्टर करें)";
+            toggleMsg.innerHTML = 'पहले से अकाउंट है? <span onclick="toggleForm()">Login करें</span>';
+        } else {
+            formTitle.innerText = "लॉगिन करें";
+            formDesc.innerText = "अपने अकाउंट में प्रवेश करें";
+            nameGroup.style.display = "none";
+            submitBtn.innerText = "Login (प्रवेश करें)";
+            toggleMsg.innerHTML = 'नया अकाउंट बनाना है? <span onclick="toggleForm()">Sign Up करें</span>';
+        }
+    }
 
-            <!-- RIGHT COLUMN: SEARCH & TRANSACTION HISTORY -->
-            <div class="bg-white p-4 rounded-lg shadow-md lg:col-span-2">
-                <h3 class="text-lg font-bold mb-3 text-blue-800 border-b pb-1">खोजें एवं इतिहास (Search Ledger)</h3>
-                
-                <!-- Search Inputs (Requirements 9 & 10) -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4 text-sm">
+    function handleSubmit() {
+        const contact = document.getElementById('contact').value;
+        const password = document.getElementById('password').value;
+
+        if (!contact || !password) {
+            alert("कृपया सभी जानकारी सही से भरें!");
+            return;
+        }
+
+        // नकली डेटाबेस एंट्री और डायरेक्ट लॉगिन
+        document.getElementById('auth-box').style.display = 'none';
+        document.getElementById('dashboard-box').style.display = 'block';
+    }
+
+    function logout() {
+        document.getElementById('dashboard-box').style.display = 'none';
+        document.getElementById('auth-box').style.display = 'block';
+        document.getElementById('contact').value = '';
+        document.getElementById('password').value = '';
+        if(document.getElementById('username')) document.getElementById('username').value = '';
+    }
+</script>
+
+</body>
+</html>
