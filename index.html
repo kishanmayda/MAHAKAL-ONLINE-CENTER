@@ -3,110 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahakal Online Center</title>
+    <title>Online Center Ledger Pro</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #ff9933, #ffffff, #138808); height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
-        h1 { color: #d35400; margin-bottom: 10px; font-size: 24px; }
-        p { color: #7f8c8d; margin-bottom: 20px; font-size: 14px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; color: #34495e; font-weight: bold; font-size: 14px; }
-        input { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 5px; font-size: 14px; }
-        input:focus { border-color: #e67e22; outline: none; }
-        .btn { width: 100%; padding: 12px; background: #e67e22; border: none; color: white; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn:hover { background: #d35400; }
-        .toggle-text { margin-top: 15px; font-size: 13px; color: #2c3e50; }
-        .toggle-text span { color: #e67e22; cursor: pointer; font-weight: bold; }
-        .dashboard { display: none; }
-        .service-card { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 15px; margin: 10px 0; border-radius: 8px; text-align: left; text-decoration: none; color: #333; display: block; font-weight: bold; transition: 0.2s; }
-        .service-card:hover { background: #fff3e6; border-color: #ff9933; }
+        :root {
+            --primary: #d35400;
+            --primary-hover: #ba4a00;
+            --success: #27ae60;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --border: #cbd5e1;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: #e2e8f0; color: var(--dark); padding: 10px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 1000px; margin-top: 10px; }
+        
+        h1, h2, h3 { color: var(--primary); margin-bottom: 15px; }
+        .btn { padding: 10px 15px; background: var(--primary); border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #219653; }
+        .btn-secondary { background: #7f8c8d; }
+        .btn-secondary:hover { background: #6c7a7d; }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: 6px; font-size: 14px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; }
+        .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+
+        /* Multi-Account Switching Views */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* Dashboard Header */
+        .shop-header { background: linear-gradient(135deg, #fff3e6, #ffe5cc); padding: 20px; border-radius: 8px; border-left: 5px solid var(--primary); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .shop-info h2 { margin: 0; color: var(--dark); font-size: 24px; }
+        .shop-info p { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+        /* Search & Filter Bar */
+        .filter-bar { background: var(--light); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+
+        /* Responsive Table */
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 800px; }
+        th { background: #f1f5f9; color: #334155; padding: 12px; font-weight: 600; border-bottom: 2px solid var(--border); }
+        td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:hover { background-color: #f8fafc; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge-deposit { background: #dcfce7; color: #15803d; }
+        .badge-withdrawal { background: #fee2e2; color: #b91c1c; }
+
+        /* Modal / Popups for dynamic adds */
+        .dynamic-add-box { display: flex; gap: 5px; margin-top: 5px; }
+
+        @media (max-width: 600px) {
+            .shop-header { flex-direction: column; align-items: flex-start; }
+            .btn { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container" id="auth-box">
-    <h1 id="form-title">जय महाकाल ऑनलाइन सेंटर</h1>
-    <p id="form-desc">नया अकाउंट बनाने के लिए जानकारी भरें</p>
-    
-    <div class="input-group" id="name-group">
-        <label>आपका नाम</label>
-        <input type="text" id="username" placeholder="पूरा नाम दर्ज करें">
+<div class="container">
+
+    <!-- 1. SIGN UP VIEW (पूरा सेंटर डेटा / नो फिक्स्ड नेम) -->
+    <div id="view-signup" class="view-section active">
+        <h2>सेंटर रजिस्ट्रेशन (Sign Up)</h2>
+        <p style="color: #64748b; margin-bottom: 20px;">अपना सुरक्षित सेंटर अकाउंट बनाएं। आपका डेटा पूरी तरह अलग और प्राइवेट रहेगा।</p>
+        
+        <div class="row">
+            <div class="form-group">
+                <label>ऑनलाइन सेंटर/दुकान का नाम *</label>
+                <input type="text" id="su-shop-name" placeholder="उदा. माँ हरसिद्धि ऑनलाइन सर्विसेस" required>
+            </div>
+            <div class="form-group">
+                <label>संचालक का पूरा नाम *</label>
+                <input type="text" id="su-owner-name" placeholder="आपका नाम दर्ज करें" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label>मोबाइल नंबर (लॉगिन आईडी) *</label>
+                <input type="text" id="su-mobile" placeholder="10 अंकों का नंबर" required>
+            </div>
+            <div class="form-group">
+                <label>WhatsApp नंबर</label>
+                <input type="text" id="su-whatsapp" placeholder="WhatsApp नंबर दर्ज करें">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label>पासवर्ड सेट करें *</label>
+                <input type="password" id="su-password" placeholder="******" required>
+            </div>
+            <div class="form-group">
+                <label>पूरा पता (गाँव/शहर, जिला, PIN) *</label>
+                <input type="text" id="su-address" placeholder="उदा. बस स्टैंड के पास, उज्जैन, 456001" required>
+            </div>
+        </div>
+        
+        <button class="btn btn-success" onclick="processSignUp()">खाता बनाएं और लॉगिन करें</button>
+        <p style="margin-top: 15px; text-align: center; font-size: 14px;">
+            पहले से अकाउंट है? <a href="#" onclick="switchView('view-login')" style="color: var(--primary); font-weight: bold;">यहाँ लॉगिन करें</a>
+        </p>
     </div>
-    <div class="input-group">
-        <label>मोबाइल नंबर / ईमेल</label>
-        <input type="text" id="contact" placeholder="9876xxxxxx">
+
+    <!-- 2. LOGIN VIEW -->
+    <div id="view-login" class="view-section">
+        <h2>सेंटर लॉगिन</h2>
+        <div class="form-group">
+            <label>पंजीकृत मोबाइल नंबर</label>
+            <input type="text" id="log-mobile" placeholder="9876xxxxxx">
+        </div>
+        <div class="form-group">
+            <label>पासवर्ड</label>
+            <input type="password" id="log-password" placeholder="******">
+        </div>
+        <button class="btn" onclick="processLogin()">लॉगिन करें</button>
+        <p style="margin-top: 15px; text-align: center; font-size: 14px;">
+            नया सेंटर खाता खोलना है? <a href="#" onclick="switchView('view-signup')" style="color: var(--primary); font-weight: bold;">यहाँ रजिस्टर करें</a>
+        </p>
     </div>
-    <div class="input-group">
-        <label>पासवर्ड</label>
-        <input type="password" id="password" placeholder="******">
-    </div>
-    
-    <button class="btn" id="submit-btn" onclick="handleSubmit()">Sign Up (रजिस्टर करें)</button>
-    
-    <p class="toggle-text" id="toggle-msg">पहले से अकाउंट है? <span onclick="toggleForm()">Login करें</span></p>
-</div>
 
-<!-- सफलता के बाद दिखने वाला डैशबोर्ड -->
-<div class="container dashboard" id="dashboard-box">
-    <h1>आपका स्वागत है!</h1>
-    <p>महाकाल ऑनलाइन सेंटर की लाइव सेवाएं नीचे दी गई हैं:</p>
-    
-    <a href="https://mp.gov.in" target="_blank" class="service-card">🕉️ महाकाल मंदिर आधिकारिक बुकिंग</a>
-    <a href="https://mponline.gov.in" target="_blank" class="service-card">💻 MP Online सरकारी फॉर्म पोर्टल्स</a>
-    <a href="https://youtube.com" target="_blank" class="service-card">📺 महाकाल लाइव आरती (YouTube)</a>
-    
-    <button class="btn" style="background: #7f8c8d;" onclick="logout()">Log Out (बाहर निकलें)</button>
-</div>
+    <!-- 3. DASHBOARD VIEW (डेटा आइसोलेशन के साथ मुख्य लेजर) -->
+    <div id="view-dashboard" class="view-section">
+        
+        <!-- गतिशील दुकान हेडर -->
+        <div class="shop-header">
+            <div class="shop-info">
+                <h2 id="dash-shop-title">दुकान का नाम</h2>
+                <p id="dash-shop-meta">संचालक: | पता: </p>
+            </div>
+            <div>
+                <button class="btn btn-secondary" onclick="processLogout()">लॉगआउट पैनल</button>
+            </div>
+        </div>
 
-<script>
-    let isSignUp = true;
+        <!-- नया ट्रांजैक्शन एंट्री फॉर्म -->
+        <fieldset style="border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <legend style="padding: 0 10px; color: var(--primary); font-weight: bold; font-size: 15px;">🆕 न्यू कस्टमर ट्रांजैक्शन एंट्री</legend>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>ग्राहक का नाम *</label>
+                    <input type="text" id="tx-cust-name" placeholder="ग्राहक का नाम" required>
+                </div>
+                <div class="form-group">
+                    <label>मोबाइल नंबर *</label>
+                    <input type="text" id="tx-cust-mobile" placeholder="10 अंक" required>
+                </div>
+                <div class="form-group">
+                    <label>आधार कार्ड (अंतिम 4 अंक) *</label>
+                    <input type="text" id="tx-cust-aadhaar" placeholder="उदा. 4321" maxlength="4" required>
+                </div>
+            </div>
 
-    function toggleForm() {
-        isSignUp = !isSignUp;
-        const formTitle = document.getElementById('form-title');
-        const formDesc = document.getElementById('form-desc');
-        const nameGroup = document.getElementById('name-group');
-        const submitBtn = document.getElementById('submit-btn');
-        const toggleMsg = document.getElementById('toggle-msg');
+            <div class="row">
+                <div class="form-group">
+                    <label>ट्रांजैक्शन प्रकार (Type)</label>
+                    <select id="tx-type">
+                        <option value="AEPS Withdrawal">AEPS Withdrawal (अंगूठा निकासी)</option>
+                        <option value="UPI Withdrawal">UPI Withdrawal (स्कैनर निकासी)</option>
+                        <option value="UPI Transfer">UPI Transfer (मनी ट्रान्सफर)</option>
+                        <option value="Cash Deposit">Cash Deposit (नकद जमा)</option>
+                        <option value="Cash Withdrawal">Cash Withdrawal (नकद निकासी)</option>
+                        <option value="Other Payment">Other Payment (अन्य भुगतान)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>ट्रांजैक्शन ID माध्यम (Select ID)</label>
+                    <select id="tx-id-select">
+                        <option value="ID-1 (Main)">ID-1 (Main)</option>
+                        <option value="ID-2 (Backup)">ID-2 (Backup)</option>
+                    </select>
+                    <div class="dynamic-add-box">
+                        <input type="text" id="new-id-input" placeholder="+ नई ID नाम" style="padding: 5px;">
+                        <button class="btn" style="padding: 5px 10px; font-size: 12px;" onclick="addNewID()">+ जोड़े</button>
+                    </div>
+                </div>
 
-        if (isSignUp) {
-            formTitle.innerText = "जय महाकाल ऑनलाइन सेंटर";
-            formDesc.innerText = "नया अकाउंट बनाने के लिए जानकारी भरें";
-            nameGroup.style.display = "block";
-            submitBtn.innerText = "Sign Up (रजिस्टर करें)";
-            toggleMsg.innerHTML = 'पहले से अकाउंट है? <span onclick="toggleForm()">Login करें</span>';
-        } else {
-            formTitle.innerText = "लॉगिन करें";
-            formDesc.innerText = "अपने अकाउंट में प्रवेश करें";
-            nameGroup.style.display = "none";
-            submitBtn.innerText = "Login (प्रवेश करें)";
-            toggleMsg.innerHTML = 'नया अकाउंट बनाना है? <span onclick="toggleForm()">Sign Up करें</span>';
-        }
-    }
-
-    function handleSubmit() {
-        const contact = document.getElementById('contact').value;
-        const password = document.getElementById('password').value;
-
-        if (!contact || !password) {
-            alert("कृपया सभी जानकारी सही से भरें!");
-            return;
-        }
-
-        // नकली डेटाबेस एंट्री और डायरेक्ट लॉगिन
-        document.getElementById('auth-box').style.display = 'none';
-        document.getElementById('dashboard-box').style.display = 'block';
-    }
-
-    function logout() {
-        document.getElementById('dashboard-box').style.display = 'none';
-        document.getElementById('auth-box').style.display = 'block';
-        document.getElementById('contact').value = '';
-        document.getElementById('password').value = '';
-        if(document.getElementById('username')) document.getElementById('username').value = '';
-    }
-</script>
-
-</body>
-</html>
+                <div class="form-group">
+                    <label>बैंक का चयन (Select Bank)</label>
+                    <select id="tx-bank-select">
+                        <option value="SBI">State Bank of India (SBI)</option>
+                        <option value="Bank of Baroda">Bank of Baroda (BOB)</option>
