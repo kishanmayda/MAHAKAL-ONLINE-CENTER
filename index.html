@@ -1,60 +1,141 @@
-### 10 Agent IDs Ko Manage Karne Ka Tarika
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Center Management System</title>
+    <!-- Tailwind CSS for Responsive UI -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        .hidden { display: none !important; }
+        .custom-gradient { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 p-2 sm:p-6">
 
-1. **Dropdown Menu with Aliases:** Agent ID field ko ek **Dropdown (Select List)** banayein. Har ID ke saath Agent Name ya Bank Nickname add karein (jaise: `Agent 01 - SBI Main`, `Agent 02 - HDFC Shop`).
-2. **Searchable Select:** Dropdown mein search bar add karein taaki ID ya Agent Name type karte hi turant select ho jaye.
-3. **Default / Recent Agent:** Sabse zyada use hone wali Agent ID ko default select par rakhein.
+    <!-- ================= AUTH CONTAINER (SIGN UP / LOGIN / OTP) ================= -->
+    <div id="auth-container" class="max-w-xl mx-auto my-10 p-6 bg-white rounded-xl shadow-lg border border-gray-200">
+        <div class="flex justify-around mb-6 border-b pb-2" id="auth-tabs">
+            <button id="tab-login" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-2 w-1/2" onclick="switchAuthMode('login')">लॉगिन (Password / OTP)</button>
+            <button id="tab-signup" class="text-gray-500 font-bold pb-2 w-1/2" onclick="switchAuthMode('signup')">नया सेंटर रजिस्ट्रेशन</button>
+        </div>
 
----
+        <!-- SIGN UP FORM -->
+        <div id="form-signup" class="hidden space-y-4">
+            <h3 class="text-lg font-bold text-gray-700 text-center">डिजिटल लेज़र खाता बनाएं</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">ऑनलाइन सेंटर/दुकान का नाम *</label>
+                    <input type="text" id="su-shop-name" placeholder="उदा. महाकाल ऑनलाइन सेंटर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">संचालक का नाम *</label>
+                    <input type="text" id="su-owner-name" placeholder="आपका नाम" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">मोबाइल नंबर *</label>
+                    <input type="text" id="su-mobile" placeholder="10 अंकों का नंबर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">WhatsApp नंबर</label>
+                    <input type="text" id="su-whatsapp" placeholder="व्हाट्सएप नंबर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-600">पूरा पता *</label>
+                <input type="text" id="su-address" placeholder="दुकान का पूरा पता दर्ज करें" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <p class="text-xs text-yellow-800 font-semibold">🔒 सुरक्षा सत्यापन: पहली बार रजिस्ट्रेशन के लिए मोबाइल नंबर पर OTP वेरीफाई करके पासवर्ड बनाना होगा।</p>
+                <button class="mt-2 text-xs bg-yellow-600 text-white font-bold px-3 py-1.5 rounded" onclick="sendOTP('su')">सत्यापन OTP भेजें</button>
+                <input type="text" id="su-otp" placeholder="Enter 4-Digit OTP" class="w-full p-2 border rounded mt-2 text-center text-sm tracking-widest hidden">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-600">नया पासवर्ड सेट करें *</label>
+                <input type="password" id="su-password" placeholder="******" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+            <button class="w-full bg-green-600 text-white font-bold p-3 rounded-lg hover:bg-green-700 transition" onclick="processSignUp()">खाता सुरक्षित करें और लॉगिन करें</button>
+        </div>
 
-### Dynamic Service Panels Structure
+        <!-- LOGIN FORM -->
+        <div id="form-login" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-600">पंजीकृत मोबाइल नंबर</label>
+                <input type="text" id="log-mobile" placeholder="9876xxxxxx" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+            <div id="login-password-box">
+                <div class="flex justify-between">
+                    <label class="text-sm font-semibold text-gray-600">पासवर्ड</label>
+                    <a href="#" class="text-xs text-blue-600 font-semibold" onclick="enableForgotMode()">पासवर्ड भूल गए (Reset)?</a>
+                </div>
+                <input type="password" id="log-password" placeholder="******" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+            <div id="login-otp-box" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <label class="block text-sm font-semibold text-blue-800 mb-1">सुरक्षित वन-टाइम पासवर्ड (OTP)</label>
+                <div class="flex gap-2">
+                    <input type="text" id="log-otp" placeholder="4-अंकीय OTP" class="w-1/2 p-2 border rounded-lg text-center tracking-widest">
+                    <button class="w-1/2 bg-blue-600 text-white font-bold text-xs rounded" onclick="sendOTP('log')">OTP जेनरेट करें</button>
+                </div>
+                <div id="reset-password-subbox" class="hidden mt-3">
+                    <label class="block text-sm font-semibold text-gray-600">नया पासवर्ड टाइप करें</label>
+                    <input type="password" id="log-new-password" placeholder="नया पासवर्ड" class="w-full p-2 border rounded-lg">
+                </div>
+            </div>
+            <div class="flex justify-between items-center py-2">
+                <button id="btn-toggle-otp-login" class="text-xs text-gray-600 font-bold underline" onclick="toggleOtpLoginMode()">या सीधे OTP से लॉगिन करें</button>
+            </div>
+            <button id="btn-main-login" class="w-full bg-blue-600 text-white font-bold p-3 rounded-lg hover:bg-blue-700 transition" onclick="processLogin()">सुरक्षित प्रवेश करें</button>
+        </div>
+    </div>
 
-#### 1. AePS Enquiry Panel
+    <!-- ================= MAIN APP DASHBOARD ================= -->
+    <div id="main-dashboard" class="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-4 sm:p-6 hidden">
+        
+        <div class="custom-gradient text-white p-6 rounded-xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+                <h1 id="dash-shop-title" class="text-2xl sm:text-3xl font-black tracking-wide">दुकान का नाम</h1>
+                <p id="dash-shop-meta" class="text-sm text-blue-100 mt-1 font-medium">संचालक: | पता: </p>
+            </div>
+            <button class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition shadow" onclick="processLogout()">🔒 लॉगआउट पैनल</button>
+        </div>
 
-* **Agent ID:** Dropdown Selection (10 Saved Agent IDs mein se chunein)
-* **Bank Name:** Bank Selection List
-* **Aadhaar / Card Last 4 Digits:** `[Aadhaar / Card Last 4 Digits]`
-* **Enquiry Balance:** Input Field (Customer ka available balance)
-* *(Remarks field hata diya gaya hai)*
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- एंट्री फ़ॉर्म -->
+            <div class="lg:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-inner">
+                <div class="mb-4 bg-blue-900 text-white p-2 rounded-lg text-center font-bold text-sm">
+                    🎯 एक्टिव सर्विस: <span id="active-service-title" class="text-yellow-300">AePS Enquiry</span>
+                </div>
 
-#### 2. AePS Withdrawal Panel
+                <div class="space-y-3">
+                    <!-- 10 ID मैनेजमेंट मैनेजर (ब्राउज़र मेमोरी लॉकिंग) -->
+                    <div class="bg-amber-50 p-2.5 border border-amber-200 rounded-lg">
+                        <label class="text-xs font-bold text-amber-900 block mb-1">🔑 मल्टी-ID एजेंट मैनेजर (10 IDs तक जोड़ें)</label>
+                        <div class="flex gap-1 mb-2">
+                            <input type="text" id="new-agent-id-input" placeholder="उदा. SpiceMoney_03" class="w-full p-1 text-xs border rounded bg-white font-semibold">
+                            <button class="bg-amber-700 text-white text-xs px-2 rounded font-bold hover:bg-amber-800" onclick="addNewAgentID()">+ ID जोड़ें</button>
+                        </div>
+                        <select id="tx-agent-id-select" class="w-full p-1.5 text-xs border rounded bg-white font-bold text-amber-950">
+                            <!-- जोड़ी गई IDs यहाँ लोड होंगी -->
+                        </select>
+                    </div>
 
-* **Agent ID:** Dropdown Selection
-* **Bank Name:** Bank Selection List
-* **Aadhaar / Card Last 4 Digits:** `[Aadhaar / Card Last 4 Digits]`
-* **Enquiry Balance:** Input Field (Nikalne se pehle ka balance)
-* **Withdrawal Amount:** Input Field (Kitna balance nikala)
-* **Charge / Katoti Amount:** Input Field (Dukaan / Service charge)
-* **Transaction Status:** Dropdown (`Success` / `Pending` / `Failed`)
-* **Remaining Balance:** Auto-calculated ya Input Field (Bacha hua balance)
-* **Remarks:** Text Field (Transaction notes / Details)
+                    <div>
+                        <label class="text-xs font-bold text-gray-600 block mb-1">ट्रांजैक्शन प्रकार (Transaction Type)</label>
+                        <select id="tx-type" class="w-full p-2 border rounded bg-white font-bold text-blue-900" onchange="handleTypeChange()">
+                            <option value="AePS Enquiry">AePS Enquiry (बैलेंस इन्क्वायरी)</option>
+                            <option value="AePS Withdrawal">AePS Withdrawal (अंगूठा निकासी)</option>
+                            <option value="Deposit">Deposit (नकद जमा)</option>
+                            <option value="UPI / QR">UPI / QR (पेमेंट स्कैनर)</option>
+                            <option value="Money Transfer">Money Transfer (मनी ट्रान्सफर)</option>
+                            <option value="Laundry Payment">Laundry Payment (लॉन्ड्री सर्विस)</option>
+                        </select>
+                    </div>
 
-#### 3. Deposit Panel
+                    <!-- डायनामिक इनपुट फील्ड्स कंटेनर -->
+                    <div id="dynamic-fields-zone" class="space-y-3 pt-2">
+                        <!-- फ़ील्ड्स यहाँ लोड होंगी -->
+                    </div>
 
-* **Customer Name:** Input Field
-* **Aadhaar / ID:** `[Aadhaar / ID Redacted]`
-* **Deposit Amount:** Input Field
-
-#### 4. UPI / QR Panel
-
-* **Customer Name:** Input Field
-* **Customer Mobile Number:** Input Field
-* **Transaction Type:** Dropdown (`Credit` / `Deposit`)
-* **Payer Mobile Number:** Input Field (Paise bhejne wale ka number)
-
-#### 5. Money Transfer Panel
-
-* **Customer Name:** Input Field
-* **Mobile Number:** Input Field
-* **Account Number:** Input Field
-* **Bank Name:** Bank Selection List
-* **Transfer Amount:** Input Field
-
-#### 6. Laundry Payment Panel
-
-* **Customer Name:** Input Field
-* **Mobile Number:** Input Field
-* **Garment / Cloth Count:** Number Input (Kapdo ki sankhya)
-* **Service Type:** Dropdown (`Wash & Iron` / `Dry Clean` / `Only Iron`)
-* **Payment Mode:** Dropdown (`Cash` / `Online`)
-* **Payment Status:** Dropdown (`Paid` / `Udhaar-Pending`)
-* **Total Amount:** Input Field (Auto-calculated / Manual)
