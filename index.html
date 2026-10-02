@@ -3,143 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Center Management System</title>
-    <!-- Tailwind CSS for Responsive UI -->
-    <script src="https://jsdelivr.net"></script>
+    <title>Grahak Seva Kendra - Financial Banking Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .hidden { display: none !important; }
-        .custom-gradient { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        body { font-family: 'Inter', sans-serif; font-size: 18px; }
+        input, select, textarea, button { font-size: 1.1rem !important; }
+        .service-btn { font-size: 1.1rem !important; font-weight: 700 !important; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 p-2 sm:p-6">
+<body class="bg-slate-200 text-slate-900 min-h-screen flex flex-col">
 
-    <!-- ================= AUTH CONTAINER (SIGN UP / LOGIN / OTP) ================= -->
-    <div id="auth-container" class="max-w-xl mx-auto my-10 p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-        <!-- Auth Tabs -->
-        <div class="flex justify-around mb-6 border-b pb-2" id="auth-tabs">
-            <button id="tab-login" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-2 w-1/2" onclick="switchAuthMode('login')">लॉगिन (Password / OTP)</button>
-            <button id="tab-signup" class="text-gray-500 font-bold pb-2 w-1/2" onclick="switchAuthMode('signup')">नया सेंटर रजिस्ट्रेशन</button>
-        </div>
-
-        <!-- 1. SIGN UP FORM -->
-        <div id="form-signup" class="hidden space-y-4">
-            <h3 class="text-lg font-bold text-gray-700 text-center">डिजिटल लेज़र खाता बनाएं</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">ऑनलाइन सेंटर/दुकान का नाम *</label>
-                    <input type="text" id="su-shop-name" placeholder="उदा. महाकाल ऑनलाइन सेंटर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+    <!-- Top Navigation Header -->
+    <header class="bg-indigo-950 text-white shadow-xl sticky top-0 z-30 border-b-4 border-amber-500">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-amber-500 text-slate-950 rounded-xl">
+                    <i class="fa-solid fa-building-columns text-3xl"></i>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-600">संचालक का नाम *</label>
-                    <input type="text" id="su-owner-name" placeholder="आपका नाम" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+                    <h1 class="text-2xl font-extrabold tracking-wide">GRAHAK SEVA KENDRA</h1>
+                    <p class="text-sm text-amber-300 font-medium">Digital Banking & Financial Services Portal</p>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">मोबाइल नंबर *</label>
-                    <input type="text" id="su-mobile" placeholder="10 अंकों का नंबर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600">WhatsApp नंबर</label>
-                    <input type="text" id="su-whatsapp" placeholder="व्हाट्सएप नंबर" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-                </div>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-600">पूरा पता (गाँव/शहर, जिला, PIN) *</label>
-                <input type="text" id="su-address" placeholder="दुकान का पूरा पता दर्ज करें" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
-            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <p class="text-xs text-yellow-800 font-semibold">🔒 सुरक्षा सत्यापन: पहली बार रजिस्ट्रेशन करने के लिए आपको मोबाइल नंबर पर OTP वेरीफाई करके पासवर्ड बनाना होगा।</p>
-                <button class="mt-2 text-xs bg-yellow-600 text-white font-bold px-3 py-1.5 rounded" onclick="sendOTP('su')">सत्यापन OTP भेजें</button>
-                <input type="text" id="su-otp" placeholder="Enter 4-Digit OTP (उदा. 1234)" class="w-full p-2 border rounded mt-2 text-center text-sm tracking-widest hidden">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-600">नया पासवर्ड सेट करें *</label>
-                <input type="password" id="su-password" placeholder="******" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
-            <button class="w-full bg-green-600 text-white font-bold p-3 rounded-lg hover:bg-green-700 transition" onclick="processSignUp()">खाता सुरक्षित करें और लॉगिन करें</button>
-        </div>
-
-        <!-- 2. LOGIN FORM -->
-        <div id="form-login" class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold text-gray-600">पंजीकृत मोबाइल नंबर</label>
-                <input type="text" id="log-mobile" placeholder="9876xxxxxx" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
             </div>
             
-            <!-- Password Field -->
-            <div id="login-password-box">
-                <div class="flex justify-between">
-                    <label class="text-sm font-semibold text-gray-600">पासवर्ड</label>
-                    <a href="#" class="text-xs text-blue-600 font-semibold" onclick="enableForgotMode()">पासवर्ड भूल गए (Reset)?</a>
+            <button onclick="toggleHistoryModal(true)" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-lg px-6 py-3 rounded-xl transition flex items-center gap-3 shadow-lg">
+                <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                <span>SEARCH / VIEW HISTORY</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-6xl mx-auto w-full p-6">
+        
+        <!-- Service Selector Tabs (LARGE DISPLAY) -->
+        <div class="bg-white p-4 rounded-2xl shadow-md border-2 border-slate-300 mb-6">
+            <div class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-3">SELECT TRANSACTION TYPE:</div>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3" id="serviceTabs">
+                
+                <!-- 1. AePS Enquiry -->
+                <button onclick="setService('aeps-enquiry')" id="tab-aeps-enquiry" class="service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-indigo-700 bg-indigo-100 text-indigo-950 shadow">
+                    <i class="fa-solid fa-magnifying-glass-dollar text-2xl mb-2 text-indigo-700"></i>
+                    <span>AePS Enquiry</span>
+                </button>
+
+                <!-- 2. AePS Withdrawal -->
+                <button onclick="setService('aeps-withdrawal')" id="tab-aeps-withdrawal" class="service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
+                    <i class="fa-solid fa-hand-holding-dollar text-2xl mb-2 text-emerald-600"></i>
+                    <span>AePS Withdrawal</span>
+                </button>
+
+                <!-- 3. Deposit -->
+                <button onclick="setService('deposit')" id="tab-deposit" class="service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
+                    <i class="fa-solid fa-piggy-bank text-2xl mb-2 text-blue-600"></i>
+                    <span>Deposit</span>
+                </button>
+
+                <!-- 4. UPI / QR / Debit -->
+                <button onclick="setService('upi-qr')" id="tab-upi-qr" class="service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
+                    <i class="fa-solid fa-qrcode text-2xl mb-2 text-purple-600"></i>
+                    <span>UPI / QR / Debit</span>
+                </button>
+
+                <!-- 5. Credit / Udhaar -->
+                <button onclick="setService('credit')" id="tab-credit" class="service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
+                    <i class="fa-solid fa-file-invoice-dollar text-2xl mb-2 text-red-600"></i>
+                    <span>Credit / Udhaar</span>
+                </button>
+
+                <!-- 6. Money Transfer -->
+                <button onclick="setService('money-transfer')" id="tab-money-transfer" class="service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
+                    <i class="fa-solid fa-money-bill-transfer text-2xl mb-2 text-orange-600"></i>
+                    <span>Money Transfer</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Primary Entry Form -->
+        <div class="bg-white rounded-2xl shadow-xl border-2 border-slate-300 overflow-hidden">
+            <div class="bg-slate-900 text-white px-8 py-5 flex justify-between items-center border-b-4 border-indigo-600">
+                <div>
+                    <h2 class="text-xl font-extrabold flex items-center gap-3">
+                        <i class="fa-solid fa-pen-to-square text-amber-400"></i>
+                        New Transaction Entry Form
+                    </h2>
                 </div>
-                <input type="password" id="log-password" placeholder="******" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-400 outline-none">
+                <span class="bg-indigo-900 text-amber-300 text-base px-4 py-1.5 rounded-lg font-mono font-bold border border-indigo-700" id="currentServiceBadge">
+                    AEPS ENQUIRY
+                </span>
             </div>
 
-            <!-- OTP Field (For Direct Login or Reset) -->
-            <div id="login-otp-box" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <label class="block text-sm font-semibold text-blue-800 mb-1">सुरक्षित वन-टाइम पासवर्ड (OTP)</label>
-                <div class="flex gap-2">
-                    <input type="text" id="log-otp" placeholder="4-अंकीय OTP दर्ज करें" class="w-1/2 p-2 border rounded-lg text-center tracking-widest">
-                    <button class="w-1/2 bg-blue-600 text-white font-bold text-xs rounded" onclick="sendOTP('log')">OTP जेनरेट करें</button>
+            <form id="transactionForm" onsubmit="handleFormSubmit(event)" class="p-8 space-y-6">
+                
+                <!-- STEP 1: Select or Write Agent / Portal ID -->
+                <div class="bg-slate-50 p-5 rounded-xl border-2 border-slate-300">
+                    <label class="block text-base font-extrabold text-indigo-950 uppercase mb-2">
+                        1. Select or Type Portal / Agent ID *
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <select id="agentSelect" onchange="toggleCustomAgentInput()" class="w-full p-3 font-semibold border-2 border-slate-400 rounded-xl focus:ring-2 focus:ring-indigo-600 bg-white">
+                                <option value="Fino Payment Bank">Fino Payment Bank</option>
+                                <option value="Airtel Payment Bank">Airtel Payment Bank</option>
+                                <option value="Spice Money">Spice Money</option>
+                                <option value="Paytm AePS">Paytm AePS</option>
+                                <option value="SBI Kiosk">SBI Kiosk / CSC</option>
+                                <option value="CUSTOM">-- Type My Own Custom ID --</option>
+                            </select>
+                        </div>
+                        <div id="customAgentBox" class="hidden">
+                            <input type="text" id="customAgentInput" placeholder="Enter your ID name (e.g., ID-9988 / Ram Agent)..." class="w-full p-3 font-bold border-2 border-amber-500 bg-amber-50 rounded-xl focus:ring-2 focus:ring-amber-600">
+                        </div>
+                    </div>
                 </div>
-                <div id="reset-password-subbox" class="hidden mt-3">
-                    <label class="block text-sm font-semibold text-gray-600">नया पासवर्ड टाइप करें</label>
-                    <input type="password" id="log-new-password" placeholder="नया पासवर्ड" class="w-full p-2 border rounded-lg">
+
+                <!-- STEP 2 & 3: Customer Name & Identification -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-base font-extrabold text-slate-800 uppercase mb-2">
+                            2. Customer Name *
+                        </label>
+                        <input type="text" id="custName" required placeholder="Enter Main Customer Full Name" class="w-full p-3.5 border-2 border-slate-400 rounded-xl focus:ring-2 focus:ring-indigo-600 font-bold">
+                    </div>
+
+                    <div>
+                        <label class="block text-base font-extrabold text-slate-800 uppercase mb-2">
+                            3. Aadhaar / Identification Number *
+                        </label>
+                        <input type="text" id="aadhaarNum" maxlength="14" required placeholder="XXXX-XXXX-XXXX" oninput="formatAadhaar(this)" class="w-full p-3.5 border-2 border-slate-400 rounded-xl focus:ring-2 focus:ring-indigo-600 font-mono font-bold">
+                    </div>
+                </div>
+
+                <!-- STEP 4 & 5: Mobile Number & Select Bank -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-base font-extrabold text-slate-800 uppercase mb-2">
+                            4. Mobile Number *
+                        </label>
+                        <input type="tel" id="custMobile" maxlength="10" required placeholder="10-digit mobile number" pattern="[0-9]{10}" class="w-full p-3.5 border-2 border-slate-400 rounded-xl focus:ring-2 focus:ring-indigo-600 font-mono font-bold">
+                    </div>
+
+                    <div>
+                        <label class="block text-base font-extrabold text-slate-800 uppercase mb-2">
+                            5. Select Customer Bank *
+                        </label>
+                        <select id="bankSelect" required class="w-full p-3.5 border-2 border-slate-400 rounded-xl focus:ring-2 focus:ring-indigo-600 font-bold bg-white">
+                            <option value="" disabled selected>-- Select Bank --</option>
+                            <option value="State Bank of India">State Bank of India (SBI)</option>
+                            <option value="Bank of Baroda">Bank of Baroda (BOB)</option>
+                            <option value="Punjab National Bank">Punjab National Bank (PNB)</option>
+                            <option value="Central Bank of India">Central Bank of India</option>
+                            <option value="HDFC Bank">HDFC Bank</option>
+                            <option value="ICICI Bank">ICICI Bank</option>
+                            <option value="Axis Bank">Axis Bank</option>
+                            <option value="Union Bank of India">Union Bank of India</option>
+                            <option value="Paytm Payments Bank">Paytm Payments Bank</option>
+                            <option value="Airtel Payments Bank">Airtel Payments Bank</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC FIELD: SENDER & RECEIVER DETAILS (For UPI, QR, Credit, Transfer) -->
+                <div id="transferPartySection" class="bg-purple-50 p-5 rounded-xl border-2 border-purple-300 space-y-4">
+                    <label class="block text-base font-extrabold text-purple-950 uppercase">
+                        Party Details (SENDER & RECEIVER / KAUN DALA & KAUN LEGA)
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Kaun Dalwane / Dene Aaya Tha? (Sender Name & Phone)</label>
+                            <input type="text" id="senderDetails" placeholder="Name / Phone of person giving cash or scanning QR" class="w-full p-3 font-semibold border-2 border-purple-300 rounded-xl bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Kisko Dala / Kaun Lene Aaya? (Receiver Name & UPI ID)</label>
+                            <input type="text" id="receiverDetails" placeholder="Name / UPI ID / Account of person receiving money" class="w-full p-3 font-semibold border-2 border-purple-300 rounded-xl bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 6: Ledger Balance Details -->
+                <div class="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-200">
+                    <label class="block text-base font-extrabold text-indigo-950 uppercase mb-4">
+                        6. Amount & Ledger Balance Details (₹)
+                    </label>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Initial Balance (Pehle kitne the)</label>
+                            <input type="number" id="preBalance" placeholder="0.00" oninput="calcBalances()" class="w-full p-3 font-extrabold text-slate-900 border-2 border-slate-400 rounded-xl">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1" id="amountLabel">Transaction Amount (Kitna Nikala)</label>
+                            <input type="number" id="txnAmount" placeholder="0.00" oninput="calcBalances()" class="w-full p-3 font-extrabold text-indigo-800 border-2 border-indigo-500 rounded-xl bg-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Remaining Balance (Kitne bache)</label>
+                            <input type="number" id="postBalance" readonly placeholder="0.00" class="w-full p-3 font-extrabold text-slate-800 border-2 border-slate-300 bg-slate-200 rounded-xl">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extended Remarks (For AePS & All Services) -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-base font-extrabold text-slate-800 uppercase">Verification Remarks & Notes (Saath mein kaun tha, kiske liye nikala...)</label>
+                        <span class="text-sm font-bold text-slate-500" id="wordCount">0 / 70 words</span>
+                    </div>
+                    <textarea id="txnRemark" rows="2" maxlength="350" oninput="updateWordCount(this)" placeholder="Likhein: Customer ke saath unka ladka tha, medicine ke liye paise withdrawal kar rahe hain, etc..." class="w-full p-3.5 border-2 border-slate-400 rounded-xl font-medium focus:ring-2 focus:ring-indigo-600"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xl py-4 px-6 rounded-2xl shadow-lg transition flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-circle-check text-2xl"></i>
+                        <span>SAVE & PROCESS ENTRY</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- SEARCH / HISTORY MODAL -->
+    <div id="historyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden border-2 border-slate-400">
+            
+            <div class="bg-slate-900 text-white p-5 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-clock-rotate-left text-amber-400 text-2xl"></i>
+                    <h3 class="font-extrabold text-xl">Transaction Search & Complete History</h3>
+                </div>
+                <button onclick="toggleHistoryModal(false)" class="text-slate-400 hover:text-white text-3xl font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Filters -->
+            <div class="p-5 bg-slate-100 border-b-2 border-slate-300 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">From Date</label>
+                    <input type="date" id="searchFromDate" onchange="filterHistory()" class="w-full p-2.5 font-bold border-2 border-slate-300 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">To Date</label>
+                    <input type="date" id="searchToDate" onchange="filterHistory()" class="w-full p-2.5 font-bold border-2 border-slate-300 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Filter ID / Type</label>
+                    <select id="searchAgent" onchange="filterHistory()" class="w-full p-2.5 font-bold border-2 border-slate-300 rounded-xl bg-white">
+                        <option value="ALL">All Transactions</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Search Name / Aadhaar</label>
+                    <input type="text" id="searchKeyword" onkeyup="filterHistory()" placeholder="Type customer name..." class="w-full p-2.5 font-bold border-2 border-slate-300 rounded-xl">
                 </div>
             </div>
 
-            <div class="flex justify-between items-center py-2">
-                <button id="btn-toggle-otp-login" class="text-xs text-gray-600 font-bold underline" onclick="toggleOtpLoginMode()">या सीधे OTP से लॉगिन करें</button>
+            <!-- Table -->
+            <div class="p-5 overflow-y-auto flex-grow">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-200 text-slate-900 uppercase font-extrabold border-b-2 border-slate-400 text-sm">
+                            <th class="p-3">Date/Time</th>
+                            <th class="p-3">Portal ID</th>
+                            <th class="p-3">Type</th>
+                            <th class="p-3">Customer & Identity</th>
+                            <th class="p-3">Sender / Receiver</th>
+                            <th class="p-3 text-right">Amount</th>
+                            <th class="p-3 text-right">Pre &rarr; Post</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="divide-y-2 divide-slate-200 text-base font-semibold">
+                    </tbody>
+                </table>
             </div>
 
-            <button id="btn-main-login" class="w-full bg-blue-600 text-white font-bold p-3 rounded-lg hover:bg-blue-700 transition" onclick="processLogin()">सुरक्षित प्रवेश करें</button>
+            <div class="p-4 bg-slate-100 border-t-2 border-slate-300 flex justify-between items-center">
+                <span id="historyCount" class="font-bold text-slate-700">Showing 0 records</span>
+                <button onclick="toggleHistoryModal(false)" class="bg-slate-800 text-white font-bold px-6 py-2.5 rounded-xl">Close Window</button>
+            </div>
         </div>
     </div>
 
-    <!-- ================= MAIN APP DASHBOARD ================= -->
-    <div id="main-dashboard" class="max-w-7xl mx-auto bg-white rounded-xl shadow-xl p-4 sm:p-6 hidden">
-        
-        <!-- गतिशील दुकान हेडर -->
-        <div class="custom-gradient text-white p-6 rounded-xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-                <h1 id="dash-shop-title" class="text-2xl sm:text-3xl font-black tracking-wide">दुकान का नाम</h1>
-                <p id="dash-shop-meta" class="text-sm text-blue-100 mt-1 font-medium">संचालक: | पता: </p>
-            </div>
-            <button class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition shadow" onclick="processLogout()">🔒 लॉगआउट पैनल</button>
-        </div>
+    <!-- JavaScript Logic -->
+    <script>
+        let currentService = 'aeps-enquiry';
+        let transactions = [];
 
-        <!-- ग्रिड लेआउट: एंट्री फॉर्म और लाइव स्टैट्स -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        function setService(service) {
+            currentService = service;
             
-            <!-- लेफ्ट कॉलम: ट्रांजैक्शन एंट्री फॉर्म -->
-            <div class="lg:col-span-1 bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-inner">
-                <h2 class="text-lg font-bold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">📝 न्यू डिजिटल एंट्री फ़ॉर्म</h2>
-                
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-xs font-bold text-gray-600">ग्राहक का पूरा नाम *</label>
-                        <input type="text" id="tx-cust-name" placeholder="Rahul" class="w-full p-2 border rounded bg-white">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-600">मोबाइल नंबर *</label>
-                        <input type="text" id="tx-cust-mobile" placeholder="9876xxxxxx" class="w-full p-2 border rounded bg-white">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-600">आधार कार्ड (अंतिम 4 अंक) *</label>
-                        <input type="text" id="tx-cust-aadhaar" placeholder="4321" maxlength="4" class="w-full p-2 border rounded bg-white font-mono">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-600">ट्रांजैक्शन प्रकार (Transaction Type)</label>
-                        <select id="tx-type" class="w-full p-2 border rounded bg-white">
-                            <option value="AEPS Withdrawal">AEPS Withdrawal (अंगूठा निकासी)</option>
-                            <option value="UPI Withdrawal">UPI Withdrawal (स्कैनर निकासी)</option>
-                            <option value="UPI Transfer">UPI Transfer (मनी ट्रान्सफर)</option>
-                            <option value="Cash Deposit">Cash Deposit (नकद जमा)</option>
-                            <option value="Cash Withdrawal">Cash Withdrawal (नकद निकासी)</option>
-                            <option value="Other Payment">Other Payment (अन्य सेवा)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-600">किस ID से हुआ (Select ID)</label>
-                        <select id="tx-id-select" class="w-full p-2 border rounded bg-white mb-1">
+            document.querySelectorAll('.service-btn').forEach(btn => {
+                btn.className = "service-btn flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-300 bg-white text-slate-800 hover:bg-slate-100";
+            });
+            const activeTab = document.getElementById(`tab-${service}`);
+            activeTab.className = "service-btn active flex flex-col items-center justify-center p-4 rounded-xl border-2 border-indigo-700 bg-indigo-100 text-indigo-950 shadow";
+
+            const badge = document.getElementById('currentServiceBadge');
+            const amountInput = document.getElementById('txnAmount');
+            const amountLabel = document.getElementById('amountLabel');
+
+            if(service === 'aeps-enquiry') {
+                badge.innerText = 'AEPS ENQUIRY';
+                amountInput.value = 0;
+                amountInput.disabled = true;
+                amountLabel.innerText = "Amount (₹ 0 for Enquiry)";
+            } else {
+                badge.innerText = service.replace('-', ' ').toUpperCase();
+                amountInput.disabled = false;
+                amountLabel.innerText = "Transaction Amount (₹)";
+            }
+            calcBalances();
+        }
+
+        function toggleCustomAgentInput() {
+            const select = document.getElementById('agentSelect');
+            const customBox = document.getElementById('customAgentBox');
+            if(select.value === 'CUSTOM') {
+                customBox.classList.remove('hidden');
+            } else {
+                customBox.classList.add('hidden');
+            }
+        }
+
+        function formatAadhaar(input) {
+            let val = input.value.replace(/\D/g, '');
+            let formatted = '';
+            for (let i = 0; i < val.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += '-';
+                formatted += val[i];
+            }
+            input.value = formatted;
+        }
+
+        function calcBalances() {
+            const pre = parseFloat(document.getElementById('preBalance').value) || 0;
+            const amt = parseFloat(document.getElementById('txnAmount').value) || 0;
+            const postInput = document.getElementById('postBalance');
+
+            if(currentService === 'aeps-withdrawal' || currentService === 'credit' || currentService === 'money-transfer') {
+                postInput.value = Math.max(0, pre - amt).toFixed(2);
+            } else if(currentService === 'deposit' || currentService === 'upi-qr') {
+                postInput.value = (pre + amt).toFixed(2);
+            } else {
+                postInput.value = pre.toFixed(2);
+            }
+        }
+
+        function updateWordCount(textarea) {
+            const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0);
+            document.getElementById('wordCount').innerText = `${words.length} / 70 words`;
+            if (words.length > 70) {
+                textarea.value = words.slice(0, 70).join(" ");
+            }
+        }
+
+        function toggleHistoryModal(show) {
+            const modal = document.getElementById('historyModal');
+            if(show) {
+                modal.classList.remove('hidden');
+                renderHistoryTable(transactions);
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const selectVal = document.getElementById('agentSelect').value;
+            const finalAgentId = (selectVal === 'CUSTOM') ? document.getElementById('customAgentInput').value : selectVal;
+
+            const entry = {
+                timestamp: new Date().toLocaleString('en-IN'),
+                date: new Date().toISOString().split('T')[0],
+                agentId: finalAgentId || 'Default ID',
+                service: currentService.toUpperCase(),
+                customerName: document.getElementById('custName').value,
+                aadhaar: document.getElementById('aadhaarNum').value,
+                mobile: document.getElementById('custMobile').value,
+                bank: document.getElementById('bankSelect').value,
+                sender: document.getElementById('senderDetails').value || 'N/A',
+                receiver: document.getElementById('receiverDetails').value || 'N/A',
+                preBalance: parseFloat(document.getElementById('preBalance').value) || 0,
+                amount: parseFloat(document.getElementById('txnAmount').value) || 0,
+                postBalance: parseFloat(document.getElementById('postBalance').value) || 0,
+                remarks: document.getElementById('txnRemark').value || 'N/A'
+            };
+
+            transactions.unshift(entry);
+            alert(`ENTRY SAVED SUCCESSFUL!\n\nPortal: ${entry.agentId}\nCustomer: ${entry.customerName}\nService: ${entry.service}`);
+
+            document.getElementById('transactionForm').reset();
+            toggleCustomAgentInput();
+            setService('aeps-enquiry');
+        }
+
+        function renderHistoryTable(data) {
+            const tbody = document.getElementById('historyTableBody');
+            document.getElementById('historyCount').innerText = `Showing ${data.length} records`;
+            
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-slate-400">No records saved yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 text-slate-600 font-mono text-sm">${item.timestamp}</td>
+                    <td class="p-3 font-bold text-indigo-900">${item.agentId}</td>
+                    <td class="p-3 font-extrabold">${item.service}</td>
+                    <td class="p-3">
+                        <div class="font-bold text-slate-900">${item.customerName}</div>
+                        <div class="font-mono text-slate-500 text-xs">${item.aadhaar}</div>
+                    </td>
+                    <td class="p-3 text-xs">
+                        <div><strong>From:</strong> ${item.sender}</div>
+                        <div><strong>To:</strong> ${item.receiver}</div>
+                    </td>
+                    <td class="p-3 text-right font-extrabold text-emerald-700">₹${item.amount.toFixed(2)}</td>
+                    <td class="p-3 text-right font-mono text-slate-600">₹${item.preBalance} &rarr; ₹${item.postBalance}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterHistory() {
+            const from = document.getElementById('searchFromDate').value;
+            const to = document.getElementById('searchToDate').value;
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+
+            const filtered = transactions.filter(t => {
+                const matchesDate = (!from || t.date >= from) && (!to || t.date <= to);
+                const matchesKeyword = t.customerName.toLowerCase().includes(keyword) || t.aadhaar.includes(keyword);
+                return matchesDate && matchesKeyword;
+            });
+
+            renderHistoryTable(filtered);
+        }
+    </script>
+</body>
+</html>
