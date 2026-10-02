@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction & Service Dashboard</title>
+    <title>Transaction Dashboard with Excel Export</title>
     <style>
         :root {
             --primary: #1e40af;
@@ -27,22 +27,22 @@
         }
 
         .dashboard-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        .header-card {
+        .header-card, .form-card, .table-card {
             background-color: var(--card);
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 16px;
-            border-left: 6px solid var(--primary);
+            margin-bottom: 20px;
         }
 
-        h2 {
+        .header-card { border-left: 6px solid var(--primary); }
+
+        h2, h3 {
             margin: 0 0 16px 0;
-            font-size: 1.5rem;
             color: var(--primary);
         }
 
@@ -52,14 +52,8 @@
             font-size: 1.1rem;
             border: 2px solid var(--border);
             border-radius: 8px;
-            background-color: #fff;
             cursor: pointer;
             font-weight: 500;
-        }
-
-        .service-selector:focus {
-            outline: none;
-            border-color: var(--primary);
         }
 
         .active-banner {
@@ -70,27 +64,17 @@
             font-weight: 700;
             font-size: 1.2rem;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             border: 1px solid #bfdbfe;
-            letter-spacing: 0.5px;
-        }
-
-        .form-card {
-            background-color: var(--card);
-            border-radius: 12px;
-            padding: 28px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .full-width {
-            grid-column: span 2;
-        }
+        .full-width { grid-column: span 2; }
 
         .form-group {
             display: flex;
@@ -105,63 +89,77 @@
         }
 
         input, select, textarea {
-            padding: 11px 14px;
+            padding: 10px 12px;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 1rem;
-            background-color: #fff;
-            color: var(--text);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
         }
 
         .status-container {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 8px;
         }
 
         .badge {
-            padding: 6px 16px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
+            font-size: 0.8rem;
         }
 
         .badge-success { background-color: var(--success-bg); color: var(--success); }
         .badge-pending { background-color: var(--pending-bg); color: var(--pending); }
 
-        .panel {
-            display: none;
-        }
+        .panel { display: none; }
+        .panel.active { display: block; }
 
-        .panel.active {
-            display: block;
+        .btn {
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
         }
 
         .submit-btn {
             background-color: var(--primary);
             color: white;
-            border: none;
-            padding: 14px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
             width: 100%;
-            margin-top: 24px;
-            transition: background 0.2s;
+            margin-top: 20px;
         }
 
-        .submit-btn:hover {
-            background-color: #1d4ed8;
+        .submit-btn:hover { background-color: #1d4ed8; }
+
+        .download-btn {
+            background-color: var(--success);
+            color: white;
+            margin-bottom: 16px;
         }
+
+        .download-btn:hover { background-color: #15803d; }
+
+        /* Table Styling */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: left;
+        }
+
+        th { background-color: var(--primary-light); color: var(--primary); }
 
         @media (max-width: 600px) {
             .form-grid { grid-template-columns: 1fr; }
@@ -173,7 +171,7 @@
 
 <div class="dashboard-container">
 
-    <!-- Service Selection Box -->
+    <!-- Top Selector -->
     <div class="header-card">
         <h2>सर्विस का चुनाव करें (Select Service)</h2>
         <select id="serviceSelector" class="service-selector" onchange="togglePanels()">
@@ -186,45 +184,42 @@
         </select>
     </div>
 
-    <!-- Live Active Title Display -->
-    <div id="activeTitle" class="active-banner">
-        ACTIVE SERVICE: AEPS ENQUIRY
-    </div>
+    <!-- Active Heading Title Banner -->
+    <div id="activeTitle" class="active-banner">ACTIVE SERVICE: AEPS ENQUIRY</div>
 
-    <!-- Main Dynamic Form -->
+    <!-- Main Entry Form -->
     <div class="form-card">
-        <form onsubmit="event.preventDefault(); alert('डाटा सफलतापूर्वक दर्ज हो गया!');">
+        <form id="mainTransactionForm" onsubmit="handleFormSubmit(event)">
             
             <!-- 1. AEPS ENQUIRY PANEL -->
             <div id="panel-aepsEnquiry" class="panel active">
                 <div class="form-grid">
                     <div class="form-group full-width">
-                        <label>Agent ID Selection (10 Saved IDs)</label>
+                        <label>Agent ID (10 Saved IDs)</label>
                         <select class="agent-dropdown">
-                            <!-- 10 Unique Managed Agent IDs -->
-                            <option value="AG-01">AG001 (Main Counter)</option>
-                            <option value="AG-02">AG002 (Branch Office)</option>
-                            <option value="AG-03">AG003 (Desk A)</option>
-                            <option value="AG-04">AG004 (Desk B)</option>
-                            <option value="AG-05">AG005 (Field Team 1)</option>
-                            <option value="AG-06">AG006 (Field Team 2)</option>
-                            <option value="AG-07">AG007 (Support Desk)</option>
-                            <option value="AG-08">AG008 (Retail Hub)</option>
-                            <option value="AG-09">AG009 (Express Counter)</option>
-                            <option value="AG-10">AG100 (Admin BackOffice)</option>
+                            <option value="AG001">AG001 (Main Counter)</option>
+                            <option value="AG002">AG002 (Branch Office)</option>
+                            <option value="AG003">AG003 (Desk A)</option>
+                            <option value="AG004">AG004 (Desk B)</option>
+                            <option value="AG005">AG005 (Field Team 1)</option>
+                            <option value="AG006">AG006 (Field Team 2)</option>
+                            <option value="AG007">AG007 (Support Desk)</option>
+                            <option value="AG008">AG008 (Retail Hub)</option>
+                            <option value="AG009">AG009 (Express Counter)</option>
+                            <option value="AG010">AG010 (Admin BackOffice)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Bank Name</label>
-                        <input type="text" placeholder="बैंक का नाम चुनें या लिखें">
+                        <input type="text" id="enqBank" placeholder="बैंक का नाम">
                     </div>
                     <div class="form-group">
                         <label>Aadhaar / Card (Last 4 Digits)</label>
-                        <input type="text" maxlength="4" placeholder="केवल आखरी 4 अंक">
+                        <input type="text" id="enqAadhaar" maxlength="4" placeholder="X X X X">
                     </div>
                     <div class="form-group full-width">
                         <label>Enquiry Balance</label>
-                        <input type="number" placeholder="₹ 0.00">
+                        <input type="number" id="enqBalance" placeholder="₹ 0.00">
                     </div>
                 </div>
             </div>
@@ -238,43 +233,41 @@
                     </div>
                     <div class="form-group">
                         <label>Bank Name</label>
-                        <input type="text" placeholder="बैंक का नाम">
+                        <input type="text" id="wthBank" placeholder="बैंक का नाम">
                     </div>
                     <div class="form-group">
                         <label>Aadhaar / Card (Last 4 Digits)</label>
-                        <input type="text" maxlength="4" placeholder="X X X X">
+                        <input type="text" id="wthAadhaar" maxlength="4" placeholder="X X X X">
                     </div>
                     <div class="form-group">
                         <label>Enquiry Balance (पहले कितना था)</label>
-                        <input type="number" placeholder="₹ 0.00">
+                        <input type="number" id="wthEnqBal" placeholder="₹ 0.00">
                     </div>
                     <div class="form-group">
                         <label>Withdrawal Amount (कितना निकाला)</label>
-                        <input type="number" placeholder="₹ 0.00">
+                        <input type="number" id="wthAmt" placeholder="₹ 0.00">
                     </div>
                     <div class="form-group">
                         <label>Charge / कटौती Amount</label>
-                        <input type="number" placeholder="₹ 0.00">
+                        <input type="number" id="wthCharge" placeholder="₹ 0.00">
                     </div>
                     <div class="form-group">
                         <label>Remaining Balance (बचा हुआ बैलेंस)</label>
-                        <input type="number" placeholder="₹ 0.00">
+                        <input type="number" id="wthRemBal" placeholder="₹ 0.00">
                     </div>
-                    
                     <div class="form-group full-width">
                         <label>Transaction Status</label>
                         <div class="status-container">
                             <select id="statusSelect" onchange="changeStatusBadge(this.value)" style="width: 140px;">
-                                <option value="success">Success</option>
-                                <option value="pending">Pending</option>
+                                <option value="Success">Success</option>
+                                <option value="Pending">Pending</option>
                             </select>
                             <span id="liveBadge" class="badge badge-success">SUCCESS</span>
                         </div>
                     </div>
-
                     <div class="form-group full-width">
                         <label>Remarks</label>
-                        <textarea rows="2" placeholder="ट्रांजैक्शन की टिप्पणी लिखें..."></textarea>
+                        <textarea id="wthRemarks" rows="2" placeholder="टिप्पणी लिखें..."></textarea>
                     </div>
                 </div>
             </div>
@@ -283,3 +276,4 @@
             <div id="panel-deposit" class="panel">
                 <div class="form-grid">
                     <div class="form-group full-width">
+                        <label>Customer Name</label>
