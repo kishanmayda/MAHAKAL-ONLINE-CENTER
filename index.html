@@ -1,292 +1,172 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahakal Online Center</title>
+    <title>Online Center Management System</title>
+    <!-- Tailwind CSS for Responsive UI -->
+    <script src="https://jsdelivr.net"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f2f5f9;
-            color: #222;
-        }
-        header {
-            background: #173b6c;
-            color: white;
-            padding: 22px;
-            text-align: center;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: 1px;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 25px auto;
-            padding: 0 15px;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-        }
-        .card h2 {
-            margin-top: 0;
-            color: #173b6c;
-            border-bottom: 2px solid #f2f5f9;
-            padding-bottom: 8px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            font-weight: bold;
-            font-size: 14px;
-            color: #555;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 7px;
-            border: 1px solid #ccc;
-            border-radius: 7px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #173b6c;
-            box-shadow: 0 0 5px rgba(23, 59, 108, 0.3);
-        }
-        button {
-            background: #173b6c;
-            color: white;
-            border: 0;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            margin-top: 21px; /* Align with inputs */
-        }
-        button:hover {
-            background: #123059;
-        }
-        .balance-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #e8eff9;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .balance-label {
-            font-size: 18px;
-            font-weight: bold;
-            color: #173b6c;
-        }
-        .balance {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-        .search-box {
-            margin-bottom: 15px;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px 10px;
-            text-align: left;
-        }
-        th {
-            background: #173b6c;
-            color: white;
-            font-weight: 600;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .badge {
-            padding: 5px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .badge-deposit { background: #e8f5e9; color: #2e7d32; }
-        .badge-withdrawal { background: #ffebee; color: #c62828; }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans text-gray-800">
 
-    <header>
-        <h1>Mahakal Online Center</h1>
-    </header>
-
-    <div class="container">
-        <!-- Transaction Input Form Card -->
-        <div class="card">
-            <h2>New Transaction</h2>
-            <div class="grid">
-                <div class="form-group">
-                    <label for="name">Customer Name *</label>
-                    <input type="text" id="name" placeholder="Enter Full Name" required>
-                </div>
-                <div class="form-group">
-                    <label for="aadhaar">Aadhaar (Last 4 Digits) *</label>
-                    <input type="text" id="aadhaar" maxlength="4" placeholder="e.g. 1234" required>
-                </div>
-                <div class="form-group">
-                    <label for="mobile">Mobile Number</label>
-                    <input type="text" id="mobile" maxlength="10" placeholder="Enter 10 Digits">
-                </div>
-                <div class="form-group">
-                    <label for="type">Transaction Type</label>
-                    <select id="type">
-                        <option value="Deposit">Deposit (+)</option>
-                        <option value="Withdrawal">Withdrawal (-)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="payment">Payment Mode</label>
-                    <select id="payment">
-                        <option value="Cash">Cash</option>
-                        <option value="UPI / Online">UPI / Online</option>
-                        <option value="AEPS Fingerprint">AEPS Fingerprint</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="amount">Amount (₹) *</label>
-                    <input type="number" id="amount" placeholder="0.00" required>
-                </div>
-            </div>
-            <div style="text-align: right; margin-top: 15px;">
-                <button type="button" onclick="addTransaction()" style="width: auto; padding: 12px 30px;">Save Transaction</button>
-            </div>
+    <!-- ================= AUTH CONTAINER (SIGN UP / LOGIN) ================= -->
+    <div id="auth-container" class="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
+        <!-- Auth Toggle Buttons -->
+        <div class="flex justify-around mb-6 border-b pb-2">
+            <button id="btn-goto-login" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1" onclick="switchAuthMode('login')">लॉगिन (Login)</button>
+            <button id="btn-goto-signup" class="text-gray-500 font-medium pb-1" onclick="switchAuthMode('signup')">साइन-अप (Sign Up)</button>
         </div>
 
-        <!-- Ledger / Records Card -->
-        <div class="card">
-            <h2>Transaction Ledger</h2>
-            
-            <div class="balance-box">
-                <span class="balance-label">Net Available Balance:</span>
-                <span id="balanceDisplay" class="balance">₹0.00</span>
+        <!-- LOGIN FORM -->
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <h2 class="text-xl font-bold mb-4 text-center">सेंटर लॉगिन</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1">मोबाइल नंबर</label>
+                <input type="tel" id="login-mobile" required class="w-full p-2 border rounded" placeholder="9893xxxxxx">
             </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1">पासवर्ड</label>
+                <input type="password" id="login-password" required class="w-full p-2 border rounded" placeholder="**">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded font-bold hover:bg-blue-700">लॉगिन करें</button>
+        </form>
 
-            <div class="search-box">
-                <label for="search">Quick Search (Filter by Aadhaar Last 4 Digits):</label>
-                <input type="text" id="search" placeholder="Type Aadhaar digits to filter dynamically..." oninput="showTransactions()">
+        <!-- SIGN UP FORM -->
+        <form id="signup-form" class="hidden" onsubmit="handleSignUp(event)">
+            <h2 class="text-xl font-bold mb-4 text-center">नया ऑनलाइन सेंटर रजिस्टर करें</h2>
+            <div class="grid grid-cols-1 gap-3 text-sm">
+                <div>
+                    <label class="block font-semibold">सेंटर/दुकान का नाम *</label>
+                    <input type="text" id="sup-shop-name" required class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block font-semibold">संचालक का नाम *</label>
+                    <input type="text" id="sup-owner-name" required class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block font-semibold">मोबाइल नंबर (लॉगिन ID) *</label>
+                    <input type="tel" id="sup-mobile" required class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block font-semibold">WhatsApp नंबर</label>
+                    <input type="tel" id="sup-whatsapp" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block font-semibold">पासवर्ड बनाएं *</label>
+                    <input type="password" id="sup-password" required class="w-full p-2 border rounded" placeholder="न्यूनतम 6 अंक">
+                </div>
+                <div>
+                    <label class="block font-semibold">पूरा पता *</label>
+                    <input type="text" id="sup-address" required class="w-full p-2 border rounded">
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block font-semibold">गाँव/शहर</label>
+                        <input type="text" id="sup-city" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">जिला</label>
+                        <input type="text" id="sup-district" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">PIN Code</label>
+                        <input type="text" id="sup-pin" class="w-full p-2 border rounded">
+                    </div>
+                </div>
             </div>
-
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date & Time</th>
-                            <th>Customer Name</th>
-                            <th>Aadhaar (L4)</th>
-                            <th>Mobile</th>
-                            <th>Type</th>
-                            <th>Mode</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionTable">
-                        <!-- Dynamic rows injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <button type="submit" class="w-full bg-green-600 text-white p-2 mt-4 rounded font-bold hover:bg-green-700">रजिस्टर करें</button>
+        </form>
     </div>
 
-    <script>
-        // Initialize ledger array from localStorage or set default
-        let transactions = JSON.parse(localStorage.getItem("mahakalTransactions")) || [];
+    <!-- ================= MAIN DASHBOARD CONTAINER ================= -->
+    <div id="dashboard-container" class="hidden min-h-screen flex flex-col">
+        <!-- Header Dynamic Name -->
+        <header class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
+            <div>
+                <h1 id="nav-shop-name" class="text-2xl font-bold">ऑनलाइन सेंटर</h1>
+                <p id="nav-owner-info" class="text-xs opacity-80"></p>
+            </div>
+            <button onclick="handleLogout()" class="bg-red-600 px-3 py-1 text-sm rounded font-semibold hover:bg-red-700">लॉगआउट</button>
+        </header>
 
-        function addTransaction() {
-            const name = document.getElementById("name").value.trim();
-            const aadhaar = document.getElementById("aadhaar").value.trim();
-            const mobile = document.getElementById("mobile").value.trim();
-            const type = document.getElementById("type").value;
-            const amount = Number(document.getElementById("amount").value);
-            const payment = document.getElementById("payment").value;
-
-            // Strict Validation
-            if (!name || !aadhaar || isNaN(amount) || amount <= 0) {
-                alert("Please fill out Name, Aadhaar (Last 4 Digits), and a valid running Amount.");
-                return;
-            }
-
-            if (aadhaar.length !== 4 || isNaN(aadhaar)) {
-                alert("Aadhaar configuration error: Please input exactly 4 digits.");
-                return;
-            }
-
-            // Create payload object
-            const newTx = {
-                date: new Date().toLocaleString('en-IN', { hour12: true }),
-                name: name,
-                aadhaar: aadhaar,
-                mobile: mobile || "N/A",
-                type: type,
-                amount: amount,
-                payment: payment
-            };
-
-            // Push execution context, serialize, and store locally
-            transactions.push(newTx);
-            localStorage.setItem("mahakalTransactions", JSON.stringify(transactions));
-
-            alert("Transaction Saved Successfully!");
-
-            // Form Fields reset
-            document.getElementById("name").value = "";
-            document.getElementById("aadhaar").value = "";
-            document.getElementById("mobile").value = "";
-            document.getElementById("amount").value = "";
-
-            // Re-render dashboard
-            showTransactions();
-        }
-
-        function showTransactions() {
-            const search = document.getElementById("search").value.trim();
-            const tableBody = document.getElementById("transactionTable");
+        <div class="p-4 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            // Clear existing viewport rows
-            tableBody.innerHTML = "";
-            
-            let runningBalance = 0;
+            <!-- LEFT COLUMN: NEW TRANSACTION FORM -->
+            <div class="bg-white p-4 rounded-lg shadow-md h-fit">
+                <h3 class="text-lg font-bold mb-3 text-blue-800 border-b pb-1">नया ट्रांजैक्शन एंट्री</h3>
+                <form onsubmit="saveTransaction(event)" class="space-y-3 text-sm">
+                    <div>
+                        <label class="block font-semibold">ग्राहक का नाम *</label>
+                        <input type="text" id="tx-cust-name" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">ग्राहक मोबाइल नंबर *</label>
+                        <input type="tel" id="tx-cust-mobile" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">आधार (अंतिम 4 अंक)</label>
+                        <input type="text" id="tx-cust-aadhaar" maxlength="4" placeholder="1234" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block font-semibold">ट्रांजैक्शन प्रकार *</label>
+                        <select id="tx-type" required class="w-full p-2 border rounded">
+                            <option value="AEPS Withdrawal">AEPS Withdrawal</option>
+                            <option value="UPI Withdrawal">UPI Withdrawal</option>
+                            <option value="UPI Transfer">UPI Transfer</option>
+                            <option value="Cash Deposit">Cash Deposit</option>
+                            <option value="Cash Withdrawal">Cash Withdrawal</option>
+                            <option value="Other Payment">Other Payment</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold">बैंक चुनें</label>
+                        <select id="tx-bank" class="w-full p-2 border rounded">
+                            <option value="SBI">SBI</option>
+                            <option value="Bank of Baroda">Bank of Baroda</option>
+                            <option value="HDFC">HDFC</option>
+                            <option value="ICICI">ICICI</option>
+                            <option value="Axis">Axis</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold">ID चुनें</label>
+                        <select id="tx-id" class="w-full p-2 border rounded">
+                            <option value="ID-1">ID-1</option>
+                            <option value="ID-2">ID-2</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-semibold">राशि (Amount) *</label>
+                            <input type="number" id="tx-amount" required class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block font-semibold">शेष राशि (Balance)</label>
+                            <input type="number" id="tx-balance" class="w-full p-2 border rounded" placeholder="0">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-700 text-white p-2 rounded font-bold hover:bg-blue-800">डेटा सुरक्षित करें</button>
+                </form>
+            </div>
 
-            // Live filter execution pipeline
-            const filtered = transactions.filter(t => {
-                return search === "" || t.aadhaar.includes(search);
-            });
+            <!-- RIGHT COLUMN: SEARCH & TRANSACTION HISTORY -->
+            <div class="bg-white p-4 rounded-lg shadow-md md:col-span-2">
+                <h3 class="text-lg font-bold mb-3 text-blue-800 border-b pb-1">खोजें एवं इतिहास (Search & Ledger)</h3>
+                
+                <!-- Advanced Search Bars -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4 text-sm">
+                    <input type="text" id="search-text" placeholder="नाम या मोबाइल से ढूंढें..." oninput="filterTransactions()" class="p-2 border rounded col-span-1 sm:col-span-1">
+                    <div class="flex items-center space-x-1 col-span-1 sm:col-span-2">
+                        <input type="date" id="search-from" onchange="filterTransactions()" class="p-2 border rounded text-xs w-full">
+                        <span>से</span>
+                        <input type="date" id="search-to" onchange="filterTransactions()" class="p-2 border rounded text-xs w-full">
+                    </div>
+                </div>
 
-            // Map and reduce array pipeline execution
-            filtered.forEach(t => {
-                if (t.type === "Deposit") {
-                    runningBalance += t.amount;
-                } else {
-                    runningBalance -= t.amount;
-                }
-
-                const row = document.createElement("tr");
+                <!-- Responsive Table Wrapper -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
